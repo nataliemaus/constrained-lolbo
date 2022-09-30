@@ -160,8 +160,6 @@ class Optimize(object):
             config_dict = {k: v for method_dict in self.method_args.values() for k, v in method_dict.items()}
             self.tracker = wandb.init(
                 project=self.wandb_project_name,
-                # program_relpath="/workspace/nmaus/mol-protein-joint-embedding/.py" 
-                settings=wandb.Settings(disable_git=True, save_code=False),
                 entity=self.wandb_entity,
                 config=config_dict,
             ) 
