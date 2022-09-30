@@ -6,7 +6,6 @@ from lolbo.utils.bo_utils.turbo import TurboState, update_state, generate_batch
 from lolbo.utils.utils import update_models_end_to_end, update_surr_model, update_constraint_surr_models
 from lolbo.utils.bo_utils.ppgpr import GPModelDKL
 import numpy as np
-from botorch.models.model_list_gp_regression import ModelListGP
 
 
 class LOLBOState:

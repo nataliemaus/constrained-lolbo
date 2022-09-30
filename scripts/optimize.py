@@ -156,6 +156,8 @@ class Optimize(object):
 
 
     def create_wandb_tracker(self):
+        import pdb 
+        pdb.set_trace() 
         if self.track_with_wandb:
             self.tracker = wandb.init(
                 project=self.wandb_project_name,
