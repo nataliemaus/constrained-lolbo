@@ -158,20 +158,14 @@ class Optimize(object):
     def create_wandb_tracker(self):
         if self.track_with_wandb:
             config_dict = {k: v for method_dict in self.method_args.values() for k, v in method_dict.items()}
-            config_dict['kwargs'] = None 
-            config_dict['__class__'] = None
-            try:
-                self.tracker = wandb.init(
-                    project=self.wandb_project_name,
-                    # program_relpath="/workspace/nmaus/mol-protein-joint-embedding/.py" 
-                    settings=wandb.Settings(disable_git=True, save_code=False),
-                    entity=self.wandb_entity,
-                    config=config_dict,
-                ) 
-                self.wandb_run_name = wandb.run.name
-            except:
-                import pdb 
-                pdb.set_trace()
+            self.tracker = wandb.init(
+                project=self.wandb_project_name,
+                # program_relpath="/workspace/nmaus/mol-protein-joint-embedding/.py" 
+                settings=wandb.Settings(disable_git=True, save_code=False),
+                entity=self.wandb_entity,
+                config=config_dict,
+            ) 
+            self.wandb_run_name = wandb.run.name
         else:
             self.tracker = None 
             self.wandb_run_name = 'no-wandb-tracking'
