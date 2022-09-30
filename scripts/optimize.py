@@ -163,6 +163,8 @@ class Optimize(object):
             try:
                 self.tracker = wandb.init(
                     project=self.wandb_project_name,
+                    # program_relpath="/workspace/nmaus/mol-protein-joint-embedding/.py" 
+                    settings=wandb.Settings(disable_git=True, save_code=False),
                     entity=self.wandb_entity,
                     config=config_dict,
                 ) 
