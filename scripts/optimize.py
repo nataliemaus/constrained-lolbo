@@ -10,6 +10,7 @@ import os
 os.environ["WANDB_SILENT"] = "True"
 from lolbo.lolbo import LOLBOState
 from lolbo.latent_space_objective import LatentSpaceObjective
+import signal 
 try:
     import wandb
     WANDB_IMPORTED_SUCCESSFULLY = True
@@ -59,6 +60,7 @@ class Optimize(object):
         k: int=1_000,
         verbose: bool=True,
     ):
+        signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
         self.method_args = {}
         self.method_args['init'] = locals()
@@ -236,6 +238,15 @@ class Optimize(object):
         print(f"Total Number of Oracle Calls (Function Evaluations): {self.lolbo_state.objective.num_calls}")
 
         return self
+    
+
+    def handler(self, signum, frame):
+        # if we Ctrl-c, make sure we log top xs, scores found
+        self.log_topk_table_wandb()
+        self.tracker.finish() 
+        msg = "Ctrl-c was pressed. terminating wandb tracker and exiting..."
+        print(msg, end="", flush=True)
+        exit(1)
 
 
     def log_topk_table_wandb(self):
