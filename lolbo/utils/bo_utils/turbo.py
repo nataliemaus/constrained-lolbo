@@ -166,17 +166,15 @@ def generate_batch(
 
     x_center = X[Y.argmax(), :].clone()  
     weights = torch.ones_like(x_center)
-    actual_min = torch.min(X).item() 
-    actual_max = torch.max(X).item() 
-    weights = weights * (actual_max - actual_min)
-
+    
     if absolute_bounds is None:
-        tr_lb = torch.clamp(x_center - weights * state.length / 2.0, actual_min, actual_max) 
-        tr_ub = torch.clamp(x_center + weights * state.length / 2.0, actual_min, actual_max) 
+        weights = weights * 8
+        tr_lb = x_center - weights * state.length / 2.0
+        tr_ub = x_center + weights * state.length / 2.0 
     else:
-        absolute_min, absolute_max = absolute_bounds
-        tr_lb = torch.clamp(x_center - weights * state.length / 2.0, absolute_min, absolute_max) 
-        tr_ub = torch.clamp(x_center + weights * state.length / 2.0, absolute_min, absolute_max) 
+        ub, lb = absolute_bounds
+        tr_lb = torch.clamp(x_center - weights * state.length / 2.0, lb, ub) 
+        tr_ub = torch.clamp(x_center + weights * state.length / 2.0, lb, ub) 
 
     if acqf == "ei":
         try:
