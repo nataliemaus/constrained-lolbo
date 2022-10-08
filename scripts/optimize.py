@@ -59,9 +59,11 @@ class Optimize(object):
         update_e2e: bool=True,
         k: int=1_000,
         verbose: bool=True,
+        recenter_only=False,
     ):
         signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
+        self.recenter_only = recenter_only # only recenter, no E2E 
         self.method_args = {}
         self.method_args['init'] = locals()
         del self.method_args['init']['self']
@@ -198,8 +200,11 @@ class Optimize(object):
             # update models end to end when we fail to make
             #   progress e2e_freq times in a row (e2e_freq=10 by default)
             if (self.lolbo_state.progress_fails_since_last_e2e >= self.e2e_freq) and self.update_e2e:
-                self.lolbo_state.update_models_e2e()
+                if not self.recenter_only:
+                    self.lolbo_state.update_models_e2e()
                 self.lolbo_state.recenter()
+                if self.recenter_only:
+                    self.lolbo_state.update_surrogate_model()
             else: # otherwise, just update the surrogate model on data
                 self.lolbo_state.update_surrogate_model()
             # generate new candidate points, evaluate them, and update data
