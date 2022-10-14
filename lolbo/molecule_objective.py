@@ -6,12 +6,6 @@ from lolbo.utils.mol_utils.selfies_vae.model_positional_unbounded import SELFIES
 from lolbo.utils.mol_utils.selfies_vae.data import collate_fn
 from lolbo.latent_space_objective import LatentSpaceObjective
 from lolbo.utils.mol_utils.mol_utils import GUACAMOL_TASK_NAMES
-import pkg_resources
-# make sure molecule software versions are correct: 
-# assert pkg_resources.get_distribution("selfies").version == '2.0.0'
-# assert pkg_resources.get_distribution("rdkit-pypi").version == '2022.3.1'
-# assert pkg_resources.get_distribution("molsets").version == '0.3.1'
-
 
 class MoleculeObjective(LatentSpaceObjective):
     '''MoleculeObjective class supports all molecule optimization
@@ -29,7 +23,6 @@ class MoleculeObjective(LatentSpaceObjective):
         max_length_constraint=10,
     ):
         assert task_id in GUACAMOL_TASK_NAMES + ["logp"]
-
         self.dim                    = 256 # SELFIES VAE DEFAULT LATENT SPACE DIM
         self.path_to_vae_statedict  = path_to_vae_statedict # path to trained vae stat dict
         self.max_string_length      = max_string_length # max string length that VAE can generate

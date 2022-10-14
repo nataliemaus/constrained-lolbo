@@ -26,7 +26,6 @@ class LOLBOState:
         acq_func='ts',
         verbose=True,
     ):
-
         self.objective          = objective         # objective with vae for particular task
         self.train_x            = train_x           # initial train x data
         self.train_y            = train_y           # initial train y data

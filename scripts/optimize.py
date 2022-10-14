@@ -265,6 +265,15 @@ class Optimize(object):
                 data_list.append([ score, str(self.lolbo_state.top_k_xs[ix]) ])
             top_k_table = wandb.Table(columns=cols, data=data_list)
             self.tracker.log({f"top_k_table": top_k_table})
+
+            # Additionally save table of ALL DATA! 
+            cols = ['All Scores', "All Strings"]
+            data_list = []
+            for ix, score in enumerate(self.lolbo_state.train_y.squeeze()):
+                data_list.append([ score.item(), str(self.lolbo_state.train_x[ix]) ])
+            full_table = wandb.Table(columns=cols, data=data_list)
+            self.tracker.log({f"full_table": full_table})
+
             self.tracker.finish()
 
         return self
