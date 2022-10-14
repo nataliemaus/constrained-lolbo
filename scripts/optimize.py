@@ -1,6 +1,7 @@
 import torch
 import random
 import numpy as np
+import pandas as pd
 import fire
 import warnings
 warnings.filterwarnings('ignore')
@@ -247,9 +248,11 @@ class Optimize(object):
 
     def handler(self, signum, frame):
         # if we Ctrl-c, make sure we log top xs, scores found
+        print("Ctrl-c hass been pressed, wait while we save all collected data...")
         self.log_topk_table_wandb()
+        print("Now terminating wandb tracker...")
         self.tracker.finish() 
-        msg = "Ctrl-c was pressed. terminating wandb tracker and exiting..."
+        msg = "Data now saved and tracker terminated, now exiting..."
         print(msg, end="", flush=True)
         exit(1)
 
@@ -266,13 +269,26 @@ class Optimize(object):
             top_k_table = wandb.Table(columns=cols, data=data_list)
             self.tracker.log({f"top_k_table": top_k_table})
 
+            
             # Additionally save table of ALL DATA! 
             cols = ['All Scores', "All Strings"]
             data_list = []
             for ix, score in enumerate(self.lolbo_state.train_y.squeeze()):
                 data_list.append([ score.item(), str(self.lolbo_state.train_x[ix]) ])
-            full_table = wandb.Table(columns=cols, data=data_list)
-            self.tracker.log({f"full_table": full_table})
+            try:
+                full_table = wandb.Table(columns=cols, data=data_list)
+                self.tracker.log({f"full_table": full_table})
+            except:
+                self.tracker.log({'save-data-table-failed':True})
+                save_dir = 'optimization_all_collected_data/'
+                if not os.path.exists(save_dir):
+                    os.mkdir(save_dir)
+                file_path = save_dir + self.wandb_project_name + '_' + wandb.run.name + '_all-data-collected.csv'
+                df = {}
+                df['train_x'] = np.array(self.lolbo_state.train_x)
+                df['train_y'] = self.lolbo_state.train_y.squeeze().detach().cpu().numpy()  
+                df = pd.DataFrame.from_dict(df)
+                df.to_csv(file_path, index=None)
 
             self.tracker.finish()
 
