@@ -61,9 +61,11 @@ class Optimize(object):
         k: int=1_000,
         verbose: bool=True,
         recenter_only=False,
+        log_table_freq=500, 
     ):
         signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
+        self.log_table_freq = log_table_freq # log all collcted data every log_table_freq oracle calls 
         self.recenter_only = recenter_only # only recenter, no E2E 
         self.method_args = {}
         self.method_args['init'] = locals()
@@ -218,6 +220,8 @@ class Optimize(object):
                     print("\nNew best found:")
                     self.print_progress_update()
                 self.lolbo_state.new_best_found = False
+            if self.lolbo_state.objective.num_calls % self.log_table_freq == 0:
+                self.log_topk_table_wandb()
 
         # if verbose, print final results
         if self.verbose:
@@ -226,6 +230,7 @@ class Optimize(object):
 
         # log top k scores and xs in table
         self.log_topk_table_wandb()
+        self.tracker.finish()
 
         return self 
 
@@ -262,6 +267,7 @@ class Optimize(object):
             top k inputs and scores found
             during optimization '''
         if self.track_with_wandb:
+            # save top k xs and ys 
             cols = ["Top K Scores", "Top K Strings"]
             data_list = []
             for ix, score in enumerate(self.lolbo_state.top_k_scores):
@@ -269,8 +275,7 @@ class Optimize(object):
             top_k_table = wandb.Table(columns=cols, data=data_list)
             self.tracker.log({f"top_k_table": top_k_table})
 
-            
-            # Additionally save table of ALL DATA! 
+            # Additionally save table of ALL collected data 
             cols = ['All Scores', "All Strings"]
             data_list = []
             for ix, score in enumerate(self.lolbo_state.train_y.squeeze()):
@@ -289,8 +294,6 @@ class Optimize(object):
                 df['train_y'] = self.lolbo_state.train_y.squeeze().detach().cpu().numpy()  
                 df = pd.DataFrame.from_dict(df)
                 df.to_csv(file_path, index=None)
-
-            self.tracker.finish()
 
         return self
 
