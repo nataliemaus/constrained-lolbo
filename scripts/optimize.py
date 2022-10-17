@@ -294,6 +294,21 @@ class Optimize(object):
                 df['train_y'] = self.lolbo_state.train_y.squeeze().detach().cpu().numpy()  
                 df = pd.DataFrame.from_dict(df)
                 df.to_csv(file_path, index=None)
+            
+            # We also want to save the fine-tuned VAE! 
+            try:
+                n_calls = self.lolbo_state.objective.num_calls
+                model = self.lolbo_state.objective.vae 
+                model = model.eval()
+                model = model.cpu() 
+                save_dir = 'finetuned_vae_ckpts/'
+                if not os.path.exists(save_dir):
+                    os.mkdir(save_dir)
+                model_save_path = save_dir + self.wandb_project_name + '_' + wandb.run.name + f'_finedtuned_vae_state_after_{n_calls}evals.pkl'  
+                torch.save(model.state_dict(), model_save_path) 
+            except: 
+                self.tracker.log({'save-vae-statedict-failed':True})
+
 
         return self
 
