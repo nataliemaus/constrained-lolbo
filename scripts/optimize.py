@@ -61,7 +61,7 @@ class Optimize(object):
         k: int=1_000,
         verbose: bool=True,
         recenter_only=False,
-        log_table_freq=200, 
+        log_table_freq=100, 
     ):
         signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
