@@ -197,6 +197,7 @@ class Optimize(object):
         '''
         # creates wandb tracker iff self.track_with_wandb == True
         self.create_wandb_tracker()
+        last_logged_n_calls = 0 # log table + save vae ckpt every log_table_freq oracle calls
         #main optimization loop
         while self.lolbo_state.objective.num_calls < self.max_n_oracle_calls:
             self.log_data_to_wandb_on_each_loop()
@@ -220,8 +221,10 @@ class Optimize(object):
                     print("\nNew best found:")
                     self.print_progress_update()
                 self.lolbo_state.new_best_found = False
-            if self.lolbo_state.objective.num_calls % self.log_table_freq == 0:
+            if (self.lolbo_state.objective.num_calls - last_logged_n_calls) >= self.log_table_freq:
                 self.log_topk_table_wandb()
+                last_logged_n_calls = self.lolbo_state.objective.num_calls
+
 
         # if verbose, print final results
         if self.verbose:
