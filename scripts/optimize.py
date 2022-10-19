@@ -12,6 +12,7 @@ os.environ["WANDB_SILENT"] = "True"
 from lolbo.lolbo import LOLBOState
 from lolbo.latent_space_objective import LatentSpaceObjective
 import signal 
+import copy 
 try:
     import wandb
     WANDB_IMPORTED_SUCCESSFULLY = True
@@ -301,7 +302,7 @@ class Optimize(object):
             # We also want to save the fine-tuned VAE! 
             try:
                 n_calls = self.lolbo_state.objective.num_calls
-                model = self.lolbo_state.objective.vae 
+                model = copy.deepcopy(self.lolbo_state.objective.vae)
                 model = model.eval()
                 model = model.cpu() 
                 save_dir = 'finetuned_vae_ckpts/'
