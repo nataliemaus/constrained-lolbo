@@ -99,12 +99,11 @@ class Optimize(object):
         assert type(self.init_train_x) is list, "load_train_data() must set self.init_train_x to a list of xs"
         if self.init_train_c is not None: # if constrained 
             assert torch.is_tensor(self.init_train_c), "load_train_data() must set self.init_train_c to a tensor of cs"
-            assert self.init_train_c.shape[0] == self.num_initialization_points, f"load_train_data() must initialize exactly self.num_initialization_points={self.num_initialization_points} cs, instead got {self.init_train_c.shape[0]} ys"
+            assert self.init_train_c.shape[0] == len(self.init_train_x), f"load_train_data() must initialize exactly the same number of cs and xs, instead got {len(self.init_train_x)} xs and {self.init_train_c.shape[0]} cs"
         assert torch.is_tensor(self.init_train_y), "load_train_data() must set self.init_train_y to a tensor of ys"
         assert torch.is_tensor(self.init_train_z), "load_train_data() must set self.init_train_z to a tensor of zs"
-        # assert len(self.init_train_x) == self.num_initialization_points, f"load_train_data() must initialize exactly self.num_initialization_points={self.num_initialization_points} xs, instead got {len(self.init_train_x)} xs"
-        assert self.init_train_y.shape[0] == len(self.init_train_x), f"load_train_data() must initialize exactly self.num_initialization_points={self.num_initialization_points} ys, instead got {self.init_train_y.shape[0]} ys"
-        assert self.init_train_z.shape[0] == len(self.init_train_x), f"load_train_data() must initialize exactly self.num_initialization_points={self.num_initialization_points} zs, instead got {self.init_train_z.shape[0]} zs"
+        assert self.init_train_y.shape[0] == len(self.init_train_x), f"load_train_data() must initialize exactly the same number of ys and xs, instead got {self.init_train_y.shape[0]} ys and {len(self.init_train_x)} xs"
+        assert self.init_train_z.shape[0] == len(self.init_train_x), f"load_train_data() must initialize exactly the same number of zs and xs, instead got {self.init_train_z.shape[0]} zs and {len(self.init_train_x)} xs"
 
         # initialize lolbo state
         self.lolbo_state = LOLBOState(
@@ -227,7 +226,7 @@ class Optimize(object):
                 last_logged_n_calls = self.lolbo_state.objective.num_calls
 
 
-        # if verbose, print final results
+        # if verbose, print final results 
         if self.verbose:
             print("\nOptimization Run Finished, Final Results:")
             self.print_progress_update()
