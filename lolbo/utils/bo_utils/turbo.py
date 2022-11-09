@@ -2,10 +2,11 @@ import math
 import torch
 from dataclasses import dataclass
 from torch.quasirandom import SobolEngine
-from botorch.acquisition import qExpectedImprovement
+# from botorch.acquisition import qExpectedImprovement
 from botorch.optim import optimize_acqf
 from .approximate_gp import *
 from .constrained_max_posterior_sampling import MaxPosteriorSampling
+# from .qExpectedImprovement import qExpectedImprovement
 
 @dataclass
 class TurboState:

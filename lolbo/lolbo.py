@@ -253,6 +253,11 @@ class LOLBOState:
 
     def update_models_e2e(self):
         '''Finetune VAE end to end with surrogate model'''
+
+        del self.objective.vae
+        torch.cuda.empty_cache()
+        self.objective.initialize_vae()
+
         self.progress_fails_since_last_e2e = 0
         new_xs = self.train_x[-self.bsz:]
         new_ys = self.train_y[-self.bsz:].squeeze(-1).tolist()
@@ -269,6 +274,9 @@ class LOLBOState:
         )
         self.tot_num_e2e_updates += 1
 
+        torch.save(self.objective.vae.state_dict(), '/workspace/mol-protein-joint-embedding/vae/saved_models/scarlet-plasma-changed-sanitycheck_model_state.pkl')
+        torch.save(self.objective.vae.state_dict(), '/workspace/mol-protein-joint-embedding/vae/saved_models/scarlet-plasma-changed_model_state.pkl')
+
         return self
 
 
@@ -277,6 +285,10 @@ class LOLBOState:
             VAE to find new locations in the
             new fine-tuned latent space
         '''
+        del self.objective.vae
+        torch.cuda.empty_cache()
+        self.objective.initialize_vae()
+
         self.objective.vae.eval()
         self.model.train()
         optimizer1 = torch.optim.Adam([{'params': self.model.parameters(),'lr': self.learning_rte} ], lr=self.learning_rte)
