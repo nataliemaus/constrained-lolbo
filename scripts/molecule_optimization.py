@@ -78,6 +78,7 @@ class MoleculeOptimization(Optimize):
 
         return self 
 
+# tmux attach -t tdock   !!!! (optimizatoin )
 
 if __name__ == "__main__":
     fire.Fire(MoleculeOptimization)

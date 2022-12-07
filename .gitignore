@@ -13,3 +13,5 @@ mujoco_vids/
 mujoco_vids/*
 lolbo.egg-info
 *train-zs.csv
+finetuned_vae_ckpts/
+finetuned_vae_ckpts/*

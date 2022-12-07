@@ -19,9 +19,14 @@ from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit import DataStructs
 from rdkit.DataStructs.cDataStructs import FoldFingerprint
 from rdkit.DataStructs.cDataStructs import TanimotoSimilarity
+try:
+    from dockstring import load_target
+    drd3_target = load_target("DRD3")
+except:
+    drd3_target = None 
+    print("Not set up to use dockstring, problem if you want to run docking optimizaiton")
 
 from guacamol import standard_benchmarks 
-
 med1 = standard_benchmarks.median_camphor_menthol() #'Median molecules 1'
 med2 = standard_benchmarks.median_tadalafil_sildenafil() #'Median molecules 2',
 pdop = standard_benchmarks.perindopril_rings() # 'Perindopril MPO',
@@ -177,6 +182,12 @@ def smiles_to_desired_scores(smiles_list, task_id="logp" ):
             score_ = smile_to_penalized_logP(smiles_str)
         elif task_id == "qed":
             score_ = smile_to_QED(smiles_str)
+        elif task_id == "dock_drd3":
+            try:
+                score_, _ = drd3_target.dock(smiles_str)
+                score_ = score_ * -1 # minimization! 
+            except:
+                score_ = None 
         else: # otherwise, assume it is a guacamol task
             score_ = smile_to_guacamole_score(task_id, smiles_str)
         if (score_ is not None) and (math.isfinite(score_) ):
@@ -310,3 +321,5 @@ def check_smiles_equivalence(smile1, smile2):
     smile1 = Chem.CanonSmiles(smile1)
     smile2 = Chem.CanonSmiles(smile2)
     return smile1 == smile2
+
+

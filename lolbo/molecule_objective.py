@@ -22,7 +22,7 @@ class MoleculeObjective(LatentSpaceObjective):
         min_length_constraint=None,
         max_length_constraint=10,
     ):
-        assert task_id in GUACAMOL_TASK_NAMES + ["logp"]
+        assert task_id in GUACAMOL_TASK_NAMES + ["logp", "dock_drd3"]
         self.dim                    = 256 # SELFIES VAE DEFAULT LATENT SPACE DIM
         self.path_to_vae_statedict  = path_to_vae_statedict # path to trained vae stat dict
         self.max_string_length      = max_string_length # max string length that VAE can generate
@@ -35,7 +35,7 @@ class MoleculeObjective(LatentSpaceObjective):
             xs_to_scores_dict=xs_to_scores_dict,
             task_id=task_id,
         )
-        
+
 
     def vae_decode(self, z):
         '''Input
