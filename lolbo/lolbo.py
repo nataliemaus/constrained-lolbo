@@ -78,10 +78,10 @@ class LOLBOState:
             valid_train_z = self.train_z
             valid_train_x = self.train_x
         # track top k scores found
-        import pdb 
-        pdb.set_trace() 
-        self.top_k_scores, top_k_idxs = torch.topk(vaid_train_y.squeeze(), min(self.k, len(vaid_train_y)))
-        self.top_k_scores = self.top_k_scores.tolist()
+        # import pdb 
+        # pdb.set_trace() 
+        self.top_k_scores, top_k_idxs = torch.topk(vaid_train_y.squeeze(), min(self.k, len(vaid_train_y.sqeeze())))
+        self.top_k_scores = self.top_k_scores.tolist() 
         top_k_idxs = top_k_idxs.tolist()
         self.top_k_xs = [valid_train_x[i] for i in top_k_idxs]
         self.top_k_zs = [valid_train_z[i].unsqueeze(-2) for i in top_k_idxs]
