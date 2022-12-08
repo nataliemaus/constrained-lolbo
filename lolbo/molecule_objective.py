@@ -133,6 +133,7 @@ class MoleculeObjective(LatentSpaceObjective):
                     None of problem is unconstrained
                     Note: constraints, must be of form c(x) <= 0!
         '''
+        return None 
         # constraint 1: len(xs) < 20
         constraints_list = []
         if self.min_length_constraint is not None:

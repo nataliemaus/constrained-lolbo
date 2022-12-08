@@ -73,8 +73,6 @@ class LOLBOState:
             vaid_train_y = self.train_y[bool_arr]
             valid_train_z = self.train_z[bool_arr]
             valid_train_x = np.array(self.train_x)[bool_arr]
-            import pdb 
-            pdb.set_trace() 
         else:
             vaid_train_y = self.train_y
             valid_train_z = self.train_z
