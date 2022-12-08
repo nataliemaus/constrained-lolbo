@@ -106,12 +106,13 @@ cd scripts/
 CUDA_VISIBLE_DEVICES=1 python3 molecule_optimization.py --task_id zale --max_string_length 400 --max_n_oracle_calls 120000 --bsz 10 - run_lolbo - done 
 ```
 
-### DOCKING!! : 
-CUDA_VISIBLE_DEVICES=1 python3 molecule_optimization.py --task_id dock_drd3 --track_with_wandb True --wandb_entity nmaus --max_string_length 400 --max_n_oracle_calls 15000 --bsz 10 - run_lolbo - done 
-
-
 runai submit valt2 -v /home/nmaus/:/workspace/ --working-dir /workspace/constrained-lolbo/scripts -i nmaus/lolbo -g 1 \
 --command -- python3 molecule_optimization.py --task_id valt --max_string_length 400 --max_n_oracle_calls 120000 --bsz 10 --recenter_only False - run_lolbo - done 
+
+### Example Command to run Docking w/ DRD3
+conda activate dockstring 
+
+CUDA_VISIBLE_DEVICES=8 python3 molecule_optimization.py --task_id dock_drd3 --track_with_wandb True --wandb_entity nmaus --max_string_length 400 --max_n_oracle_calls 25000 --bsz 10 - run_lolbo - done 
 
 ## How to Run LOLBO on Other Tasks
 To run LOLBO on other tasks, you'll need to write two new classes: 
