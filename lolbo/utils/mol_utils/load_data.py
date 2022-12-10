@@ -18,6 +18,7 @@ def load_molecule_train_data(
         # can only use ass many smiles/selfies as we have computed so far
         train_x_smiles = np.array(train_x_smiles[0:train_y.shape[0]])
         train_x_selfies = np.array(train_x_selfies[0:train_y.shape[0]])
+        train_y = train_y[0:train_x_selfies.shape[0]]
         # get rid of invalid (nan) initial points 
         bool_arr = torch.logical_not(torch.isnan(train_y))
         train_y = train_y[bool_arr]
