@@ -137,3 +137,12 @@ Create a new child class of Optimize (see `scripts/optimize.py`) which defines t
 
 See example optimization class for molecule tasks: 
 `scripts/molecule_optimization.py`
+
+
+
+# For testing DCSVGP: 
+CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 500 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 5 --wandb_entity nmaus --surrogate_model_type ApproximateGP --mll_type PPGPR - run_lolbo - done 
+
+
+surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
+mll_type in ["ELBO", "PPGPR"]

@@ -42,6 +42,7 @@ class Optimize(object):
         k: We keep track of and update end to end on the top k points found during optimization
         verbose: If True, we print out updates such as best score found, number of oracle calls made, etc. 
     """
+    
     def __init__(
         self,
         task_id: str,
