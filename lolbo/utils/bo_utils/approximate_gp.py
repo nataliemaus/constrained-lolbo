@@ -414,3 +414,29 @@ class SingleTaskVariationalGP(ApproximateGPyTorchModel):
         # TODO: make this a flag?
         self.training_inputs = [train_X]
         self.train_targets = train_Y
+
+
+import gpytorch
+from gpytorch.models import ApproximateGP
+from gpytorch.variational import CholeskyVariationalDistribution
+from gpytorch.variational import VariationalStrategyDecoupledConditionals
+from torch.utils.data import TensorDataset, DataLoader
+
+class GPModel(ApproximateGP):
+    def __init__(self, inducing_points):
+        
+        variational_distribution = CholeskyVariationalDistribution(inducing_points.size(0))
+
+        covar_module_mean = gpytorch.kernels.RBFKernel()
+        variational_strategy = VariationalStrategyDecoupledConditionals(self, inducing_points, 
+                                                 variational_distribution, covar_module_mean)
+        super(GPModel, self).__init__(variational_strategy)
+        
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.covar_module = gpytorch.kernels.RBFKernel()
+        
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)

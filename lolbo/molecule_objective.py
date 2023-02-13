@@ -1,7 +1,10 @@
 import numpy as np
 import torch 
 import selfies as sf 
-from lolbo.utils.mol_utils.mol_utils import smiles_to_desired_scores
+from lolbo.utils.mol_utils.mol_utils import (
+    setup_tdc_oracle,
+    smiles_to_desired_scores,
+) 
 from lolbo.utils.mol_utils.selfies_vae.model_positional_unbounded import SELFIESDataset, InfoTransformerVAE
 from lolbo.utils.mol_utils.selfies_vae.data import collate_fn
 from lolbo.latent_space_objective import LatentSpaceObjective
@@ -22,13 +25,16 @@ class MoleculeObjective(LatentSpaceObjective):
         min_length_constraint=None,
         max_length_constraint=10,
     ):
-        assert task_id in GUACAMOL_TASK_NAMES + ["logp", "dock_drd3"]
+        assert task_id in GUACAMOL_TASK_NAMES + ["logp", "dock_drd3", "tdc_drd3"]
         self.dim                    = 256 # SELFIES VAE DEFAULT LATENT SPACE DIM
         self.path_to_vae_statedict  = path_to_vae_statedict # path to trained vae stat dict
         self.max_string_length      = max_string_length # max string length that VAE can generate
         self.smiles_to_selfies      = smiles_to_selfies # dict to hold computed mappings form smiles to selfies strings
         self.min_length_constraint  = min_length_constraint
         self.max_length_constraint  = max_length_constraint 
+        self.tdc_oracle = None 
+        if task_id == "tdc_drd3":
+            self.tdc_oracle = setup_tdc_oracle('3pbl_docking')  
 
         super().__init__(
             num_calls=num_calls,
@@ -73,7 +79,7 @@ class MoleculeObjective(LatentSpaceObjective):
                 or np.nan in the case that x is an invalid input
         '''
         # method assumes x is a single smiles string
-        score = smiles_to_desired_scores([x], self.task_id).item()
+        score = smiles_to_desired_scores([x], self.task_id, tdc_oracle=self.tdc_oracle).item()
 
         return score
 

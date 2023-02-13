@@ -4,7 +4,10 @@ import math
 from multiprocessing.pool import ThreadPool
 import itertools
 import time 
-from lolbo.utils.mol_utils.moses_metrics.SA_Score import sascorer 
+try:
+    from lolbo.utils.mol_utils.moses_metrics.SA_Score import sascorer 
+except:
+    print("Warning: failed to import sascoere, PLOGP not available")
 try: # for tdc docking 
     from tdc import Oracle
 except: 
@@ -141,29 +144,31 @@ def _cycle_score(mol):
 
 
 def setup_tdc_oracle(protien_name):
-    oracle = Oracle(name=protien_name)
+    oracle = Oracle(protien_name)
     return oracle
 
-
-def smile_to_tdc_docking_score(smiles_str, tdc_oracle, max_smile_len=600, timeout=600):
+def smile_to_tdc_docking_score(smiles_str, tdc_oracle, max_smile_len=400, timeout=1):
     # goal of function:
     #          return docking score (score = tdc_oracle(smiles_str) ) iff it can be computed within timeout seconds
-    #           otherwise, return None
-    if not smile_is_valid_mol(smiles_str):
-        return None
-    smiles_str = Chem.CanonSmiles(smiles_str)
-    if len(smiles_str) > max_smile_len:
-        return None
+    #           otherwise, return None 
+    if False:
+        if not smile_is_valid_mol(smiles_str):
+            return None
+        smiles_str = Chem.CanonSmiles(smiles_str)
+        if len(smiles_str) > max_smile_len:
+            return None
     start = time.time()
 
     def get_the_score(smiles_str):
-        docking_score = tdc_oracle(smiles_str)
-        return docking_score
+        try:
+            docking_score = tdc_oracle(smiles_str)
+            return docking_score
+        except:
+            return None 
 
+    # from multiprocessing.context import TimeoutError
     pool = ThreadPool(1)
-
     async_result = pool.apply_async(get_the_score, (smiles_str,))
-    from multiprocessing.context import TimeoutError
     try:
         ret_value = async_result.get(timeout=timeout)
     except Exception as e:
@@ -171,21 +176,26 @@ def smile_to_tdc_docking_score(smiles_str, tdc_oracle, max_smile_len=600, timeou
         # print('TimeoutError encountered getting docking score for smiles_str:', smiles_str)
         ret_value = None
 
-    print(f"getting docking score: {ret_value} from protein took {time.time()-start} seconds")
+    print(f"getting docking score: {ret_value} took {time.time()-start} seconds")
     return ret_value
 
 
-def smiles_to_desired_scores(smiles_list, task_id="logp" ):
+def smiles_to_desired_scores(smiles_list, task_id="logp", tdc_oracle=None ):
     scores = [] 
     for smiles_str in smiles_list:
         if task_id == "logp":
             score_ = smile_to_penalized_logP(smiles_str)
         elif task_id == "qed":
             score_ = smile_to_QED(smiles_str)
-        elif task_id == "dock_drd3":
+        elif task_id == "dock_drd3": # dockstring! 
             try:
                 score_, _ = drd3_target.dock(smiles_str)
                 score_ = score_ * -1 # minimization! 
+            except:
+                score_ = None 
+        elif task_id == "tdc_drd3":
+            try:
+                score_ = smile_to_tdc_docking_score(smiles_str, tdc_oracle)
             except:
                 score_ = None 
         else: # otherwise, assume it is a guacamol task
@@ -323,3 +333,9 @@ def check_smiles_equivalence(smile1, smile2):
     return smile1 == smile2
 
 
+if __name__ == "__main__":
+    for len in range(1000, 10_000, 100):
+        smiles_list = ['CCCCCCCCC'*len]
+        tdc_oracle = setup_tdc_oracle('3pbl_docking')  
+        score = smiles_to_desired_scores(smiles_list, task_id="tdc_drd3", tdc_oracle=tdc_oracle )
+        print("SUCCESSFULLY COMPUTEED score:", score, 'w/ len', len)

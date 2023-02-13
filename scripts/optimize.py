@@ -63,6 +63,8 @@ class Optimize(object):
         verbose: bool=True,
         recenter_only=False,
         log_table_freq=100, 
+        surrogate_model_type="ApproximateGP_DKL", # approximate gp w/ a deep kernel
+        mll_type="PPGPR", # Use predictive log likelihood (ppgpr)
     ):
         signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
@@ -119,7 +121,9 @@ class Optimize(object):
             learning_rte=learning_rte,
             bsz=bsz,
             acq_func=acq_func,
-            verbose=verbose
+            verbose=verbose,
+            surrogate_model_type=surrogate_model_type, 
+            mll_type=mll_type, 
         )
 
 

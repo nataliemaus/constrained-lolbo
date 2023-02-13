@@ -1,0 +1,48 @@
+import gpytorch
+from gpytorch.models import ApproximateGP
+from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
+# from gpytorch.variational import VariationalStrategyDecoupledConditionals
+from .variational_strategy_decoupled_conditionals import VariationalStrategyDecoupledConditionals
+# from torch.utils.data import TensorDataset, DataLoader
+
+class DCSVGP(ApproximateGP):
+    def __init__(self, inducing_points):
+        
+        variational_distribution = CholeskyVariationalDistribution(inducing_points.size(0))
+
+        covar_module_mean = gpytorch.kernels.RBFKernel()
+        variational_strategy = VariationalStrategyDecoupledConditionals(self, inducing_points, 
+                                                 variational_distribution, covar_module_mean)
+        super(DCSVGP, self).__init__(variational_strategy)
+        
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.covar_module = gpytorch.kernels.RBFKernel()
+        
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+
+# Baseline SVGP (OR PPGPR) Model
+class BaselineSVGP(ApproximateGP):
+    def __init__(self, inducing_points):
+        variational_distribution = CholeskyVariationalDistribution(inducing_points.size(0))
+        variational_strategy = VariationalStrategy(self, inducing_points, 
+                                                   variational_distribution)
+        super(BaselineSVGP, self).__init__(variational_strategy)
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.covar_module = gpytorch.kernels.RBFKernel()
+         
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+
+# # SVGP:
+# if mll_type == "ELBO":
+#     mll = gpytorch.mlls.VariationalELBO(model.likelihood, model, num_data=train_y.size(0))
+# # PPGPR: 
+# elif mll_type == "PLL":
+#     mll = gpytorch.mlls.PredictiveLogLikelihood(model.likelihood, model, num_data=train_y.size(0))

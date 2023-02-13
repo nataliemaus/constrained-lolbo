@@ -5,6 +5,7 @@ from gpytorch.mlls import PredictiveLogLikelihood
 from lolbo.utils.bo_utils.turbo import TurboState, update_state, generate_batch
 from lolbo.utils.utils import update_models_end_to_end, update_surr_model, update_constraint_surr_models
 from lolbo.utils.bo_utils.ppgpr import GPModelDKL
+from lolbo.utils.bo_utils.dcsvgp import DCSVGP, BaselineSVGP
 import numpy as np
 
 
@@ -25,6 +26,8 @@ class LOLBOState:
         bsz=10,
         acq_func='ts',
         verbose=True,
+        surrogate_model_type="ApproximateGP_DKL", # approximate gp w/ a deep kernel
+        mll_type="PPGPR", # Use predictive log likelihood (ppgpr)
     ):
         self.objective          = objective         # objective with vae for particular task
         self.train_x            = train_x           # initial train x data
@@ -38,7 +41,9 @@ class LOLBOState:
         self.learning_rte       = learning_rte      # lr to use for model updates
         self.bsz                = bsz               # acquisition batch size
         self.acq_func           = acq_func          # acquisition function (Expected Improvement (ei) or Thompson Sampling (ts))
-        self.verbose            = verbose
+        self.verbose            = verbose           # print extra progress updates
+        self.mll_type           = mll_type          # ppgpr (predictive log likelhood), or elbo (standard svgp)
+        self.surrogate_model_type = surrogate_model_type # standarad approximate gp or dcsvgp (UAI 23 Submission)
 
         assert acq_func in ["ei", "ts"]
         if minimize:
@@ -50,6 +55,9 @@ class LOLBOState:
         self.best_x_seen = train_x[torch.argmax(train_y.squeeze())]
         self.initial_model_training_complete = False # initial training of surrogate model uses all data for more epochs
         self.new_best_found = False
+
+        assert self.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
+        assert self.mll_type in ["ELBO", "PPGPR"]
 
         self.initialize_top_k()
         self.initialize_surrogate_model()
@@ -137,8 +145,22 @@ class LOLBOState:
     def initialize_surrogate_model(self ):
         likelihood = gpytorch.likelihoods.GaussianLikelihood().cuda() 
         n_pts = min(self.train_z.shape[0], 1024)
-        self.model = GPModelDKL(self.train_z[:n_pts, :].cuda(), likelihood=likelihood ).cuda()
-        self.mll = PredictiveLogLikelihood(self.model.likelihood, self.model, num_data=self.train_z.size(-2))
+        if self.surrogate_model_type == "DCSVGP":
+            self.model = DCSVGP(self.train_z[:n_pts, :].cuda() ).cuda() 
+        elif self.surrogate_model_type == "ApproximateGP":
+            self.model = BaselineSVGP(self.train_z[:n_pts, :].cuda() ).cuda() 
+        elif self.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
+            self.model = GPModelDKL(self.train_z[:n_pts, :].cuda(), likelihood=likelihood ).cuda()
+        else:
+            assert("Invalid surrogate model type")
+
+        if self.mll_type == "ELBO": # Standard SVGP
+            self.mll = gpytorch.mlls.VariationalELBO(self.model.likelihood, self.model, num_data=self.train_z.size(-2))
+        elif self.mll_type == "PPGPR": # PPGPR (DEFAULT)
+            self.mll = gpytorch.mlls.PredictiveLogLikelihood(self.model.likelihood, self.model, num_data=self.train_z.size(-2))
+        else:
+            assert("Invalid mll type")
+
         self.model = self.model.eval() 
         self.model = self.model.cuda()
 
