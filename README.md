@@ -141,8 +141,24 @@ See example optimization class for molecule tasks:
 
 
 # For testing DCSVGP: 
-CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 500 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 5 --wandb_entity nmaus --surrogate_model_type ApproximateGP --mll_type PPGPR - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 500 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 5 --wandb_entity nmaus --surrogate_model_type DCSVGP --mll_type PPGPR - run_lolbo - done 
 
 
 surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
 mll_type in ["ELBO", "PPGPR"]
+
+# GAUSS NODE 1, uai0, uai1, ... 
+conda activate lolbo_mols
+
+
+# Variations: 
+CUDA_VISIBLE_DEVICES=4 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 20000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP --mll_type PPGPR - run_lolbo - done 
+
+CUDA_VISIBLE_DEVICES=5 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 20000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP --mll_type ELBO - run_lolbo - done 
+
+CUDA_VISIBLE_DEVICES=8 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 20000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP --mll_type PPGPR - run_lolbo - done 
+
+CUDA_VISIBLE_DEVICES=3 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 20000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP --mll_type ELBO - run_lolbo - done 
+
+# first three run x3, last on x2...
+# wandb connection issue on gauss, maybe better on locust??

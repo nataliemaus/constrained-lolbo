@@ -4,6 +4,7 @@ from gpytorch.variational import CholeskyVariationalDistribution, VariationalStr
 # from gpytorch.variational import VariationalStrategyDecoupledConditionals
 from .variational_strategy_decoupled_conditionals import VariationalStrategyDecoupledConditionals
 # from torch.utils.data import TensorDataset, DataLoader
+from botorch.posteriors.gpytorch import GPyTorchPosterior
 
 class DCSVGP(ApproximateGP):
     def __init__(self, inducing_points):
@@ -18,6 +19,17 @@ class DCSVGP(ApproximateGP):
         self.mean_module = gpytorch.means.ConstantMean()
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
         self.covar_module = gpytorch.kernels.RBFKernel()
+    
+    def posterior(
+        self, X, observation_noise=False, *args, **kwargs
+    ) -> GPyTorchPosterior:
+        self.eval()  # make sure model is in eval mode
+        self.likelihood.eval()
+        dist = self.forward(X)
+        if observation_noise:
+            dist = self.likelihood(dist, *args, **kwargs)
+
+        return GPyTorchPosterior(mvn=dist)
         
     def forward(self, x):
         mean_x = self.mean_module(x)
@@ -34,6 +46,17 @@ class BaselineSVGP(ApproximateGP):
         self.mean_module = gpytorch.means.ConstantMean()
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
         self.covar_module = gpytorch.kernels.RBFKernel()
+    
+    def posterior(
+        self, X, observation_noise=False, *args, **kwargs
+    ) -> GPyTorchPosterior:
+        self.eval()  # make sure model is in eval mode
+        self.likelihood.eval()
+        dist = self.forward(X)
+        if observation_noise:
+            dist = self.likelihood(dist, *args, **kwargs)
+
+        return GPyTorchPosterior(mvn=dist)
          
     def forward(self, x):
         mean_x = self.mean_module(x)
