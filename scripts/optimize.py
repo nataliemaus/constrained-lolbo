@@ -63,7 +63,7 @@ class Optimize(object):
         k: int=1_000,
         verbose: bool=True,
         recenter_only=False,
-        log_table_freq=100, 
+        log_table_freq=10_000_000, 
         surrogate_model_type="ApproximateGP_DKL", # approximate gp w/ a deep kernel
         mll_type="PPGPR", # Use predictive log likelihood (ppgpr)
     ):
