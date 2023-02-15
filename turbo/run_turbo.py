@@ -212,7 +212,7 @@ if __name__ == "__main__":
     # maybe
     parser.add_argument('--num_init_data_pts', type=int, default=1024 ) 
     parser.add_argument('--task_id', default="rover" ) 
-    parser.add_argument('--max_n_calls', type=int, default=20_000)
+    parser.add_argument('--max_n_calls', type=int, default=5_000)
     parser.add_argument('--seed', type=int, default=0 ) 
     # often 
     parser.add_argument('--surrogate_model_type', default="ApproximateGP_DKL" ) 
@@ -222,11 +222,14 @@ if __name__ == "__main__":
     assert og_args.mll_type in ["ELBO", "PPGPR"]
 
     args = copy.deepcopy(og_args)
-    for s in range(10):
+    for s in range(1, 10):
         args.seed = s
         runner = RunTurbo(args) 
         runner.run()
 
 # cd turbo 
 # CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
 
