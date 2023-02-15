@@ -222,14 +222,14 @@ if __name__ == "__main__":
     assert og_args.mll_type in ["ELBO", "PPGPR"]
 
     args = copy.deepcopy(og_args)
-    for s in range(10, 20):
+    for s in range(20, 30):
         args.seed = s
         runner = RunTurbo(args) 
         runner.run()
 
 # cd turbo 
-# CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
-# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
 
