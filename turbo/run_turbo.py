@@ -222,7 +222,7 @@ if __name__ == "__main__":
     assert og_args.mll_type in ["ELBO", "PPGPR"]
 
     args = copy.deepcopy(og_args)
-    for s in range(1, 10):
+    for s in range(10, 20):
         args.seed = s
         runner = RunTurbo(args) 
         runner.run()
