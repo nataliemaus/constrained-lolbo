@@ -83,7 +83,6 @@ class DCSVGP_DKL(ApproximateGP):
                 inducing_points_mean,
                 inducing_points_covar,
                 variational_distribution,
-                learn_inducing_locations=True
             )
         super(DCSVGP_DKL, self).__init__(variational_strategy)
         self.mean_module = gpytorch.means.ConstantMean()
