@@ -210,13 +210,15 @@ if __name__ == "__main__":
     parser.add_argument('--init_n_epochs', type=int, default=60) 
     parser.add_argument('--acq_func', type=str, default='ts' )
     parser.add_argument('--bsz', type=int, default=10)  
-    parser.add_argument('--max_allowed_calls_without_progresss', type=int, default=10_000 )
+    parser.add_argument('--max_allowed_calls_without_progresss', type=int, default=100_000 )
     # parser.add_argument('--minimize', type=bool, default=True) 
     # maybe
     parser.add_argument('--num_init_data_pts', type=int, default=1024 ) 
     parser.add_argument('--task_id', default="rover" ) 
-    parser.add_argument('--max_n_calls', type=int, default=5_000)
+    parser.add_argument('--max_n_calls', type=int, default=20_000)
     parser.add_argument('--seed', type=int, default=0 ) 
+    parser.add_argument('--min_seed', type=int, default=3 ) 
+    parser.add_argument('--max_seed', type=int, default=10 ) 
     # often 
     parser.add_argument('--surrogate_model_type', default="ApproximateGP_DKL" ) 
     parser.add_argument('--mll_type', default="PPGPR" ) 
@@ -225,7 +227,7 @@ if __name__ == "__main__":
     assert og_args.mll_type in ["ELBO", "PPGPR"]
 
     args = copy.deepcopy(og_args)
-    for s in range(20, 30):
+    for s in range(args.min_seed, args.max_seed + 1):
         args.seed = s
         runner = RunTurbo(args) 
         runner.run()
@@ -238,11 +240,10 @@ if __name__ == "__main__":
 
 # running now 0-10, 10-20, 20-30 :) 
 
+# CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type ApproximateGP --mll_type ELBO
 
-# CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
-# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
 
-
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 -surrogate_model_type ApproximateGP --mll_type PPGPR
 
