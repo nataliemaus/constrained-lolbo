@@ -66,6 +66,7 @@ class Optimize(object):
         log_table_freq=10_000_000, 
         surrogate_model_type="ApproximateGP_DKL", # approximate gp w/ a deep kernel
         mll_type="PPGPR", # Use predictive log likelihood (ppgpr)
+        dc_shared_inducing_pts=False,
     ):
         signal.signal(signal.SIGINT, self.handler)
         # add all local args to method args dict to be logged by wandb
@@ -125,6 +126,7 @@ class Optimize(object):
             verbose=verbose,
             surrogate_model_type=surrogate_model_type, 
             mll_type=mll_type, 
+            dc_shared_inducing_pts=dc_shared_inducing_pts,
         )
 
 

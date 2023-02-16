@@ -243,11 +243,11 @@ if __name__ == "__main__":
 # docker pull nmaus/robot 
 # docker run -v /shared_data/constrained-lolbo:/workspace/constrained-lolbo --gpus all -it nmaus/robot
 
-# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 23 --max_seed 32 --surrogate_model_type DCSVGP --mll_type ELBO
-# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 23 --max_seed 32 --surrogate_model_type ApproximateGP --mll_type ELBO
-# running above for 3-12, 13-22, 23-32 (Kaiwen doing 0-2)
-# Not doing PPGPR (below, all on Gauss!)
+# Eric 6000
+# docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
 
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 12 --surrogate_model_type DCSVGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 12 -surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR
 

@@ -28,6 +28,7 @@ class LOLBOState:
         verbose=True,
         surrogate_model_type="ApproximateGP_DKL", # approximate gp w/ a deep kernel
         mll_type="PPGPR", # Use predictive log likelihood (ppgpr)
+        dc_shared_inducing_pts=False,
     ):
         self.objective          = objective         # objective with vae for particular task
         self.train_x            = train_x           # initial train x data
@@ -44,6 +45,7 @@ class LOLBOState:
         self.verbose            = verbose           # print extra progress updates
         self.mll_type           = mll_type          # ppgpr (predictive log likelhood), or elbo (standard svgp)
         self.surrogate_model_type = surrogate_model_type # standarad approximate gp or dcsvgp (UAI 23 Submission)
+        self.dc_shared_inducing_pts = dc_shared_inducing_pts # (Also for UAI 23, does dcsvgp dkl use shared inducing pts?)
 
         assert acq_func in ["ei", "ts"]
         if minimize:
@@ -160,6 +162,7 @@ class LOLBOState:
                 inducing_points=self.train_z[:n_pts, :].cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128), 
+                shared_inducing_pts=self.dc_shared_inducing_pts,
             ).cuda()
         else:
             assert("Invalid surrogate model type")

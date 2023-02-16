@@ -2,7 +2,10 @@ import gpytorch
 from gpytorch.models import ApproximateGP
 from gpytorch.variational import CholeskyVariationalDistribution
 # from gpytorch.variational import VariationalStrategy
-from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor import VariationalStrategyDecoupledFeatureExtractors
+from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor import VariationalStrategyDecoupledFeatureExtractors as RegularVariationalStrategyDecoupledFeatureExtractors
+from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor_shared_u import VariationalStrategyDecoupledFeatureExtractors as SharedInducingVariationalStrategyDecoupledFeatureExtractors
+
+
 from botorch.posteriors.gpytorch import GPyTorchPosterior
 import torch
 from collections import OrderedDict
@@ -45,8 +48,13 @@ class DenseNetwork(torch.nn.Sequential):
 
 # gp model with deep kernel
 class DCSVGP_DKL(ApproximateGP):
-    def __init__(self, inducing_points, likelihood, hidden_dims=(256, 256) ):
-        
+    def __init__(
+        self, 
+        inducing_points, 
+        likelihood, 
+        hidden_dims=(256, 256),
+        shared_inducing_pts=False,
+    ):
         feature_extractor_mean = DenseNetwork(
             input_dim=inducing_points.size(-1),
             hidden_dims=hidden_dims).to(inducing_points.device
@@ -61,13 +69,22 @@ class DCSVGP_DKL(ApproximateGP):
         inducing_points_covar = feature_extractor_covar(inducing_points)
 
         variational_distribution = CholeskyVariationalDistribution(inducing_points_covar.size(0))
-        variational_strategy = VariationalStrategyDecoupledFeatureExtractors(
-            self,
-            inducing_points_mean,
-            inducing_points_covar,
-            variational_distribution,
-            learn_inducing_locations=True
-        )
+        if shared_inducing_pts:
+            variational_strategy = RegularVariationalStrategyDecoupledFeatureExtractors(
+                self,
+                inducing_points_mean,
+                inducing_points_covar,
+                variational_distribution,
+                learn_inducing_locations=True
+            )
+        else:
+            variational_strategy = SharedInducingVariationalStrategyDecoupledFeatureExtractors(
+                self,
+                inducing_points_mean,
+                inducing_points_covar,
+                variational_distribution,
+                learn_inducing_locations=True
+            )
         super(DCSVGP_DKL, self).__init__(variational_strategy)
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
