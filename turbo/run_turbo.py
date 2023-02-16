@@ -215,7 +215,7 @@ if __name__ == "__main__":
     # maybe
     parser.add_argument('--num_init_data_pts', type=int, default=1024 ) 
     parser.add_argument('--task_id', default="rover" ) 
-    parser.add_argument('--max_n_calls', type=int, default=20_000)
+    parser.add_argument('--max_n_calls', type=int, default=5_000)
     parser.add_argument('--seed', type=int, default=0 ) 
     parser.add_argument('--min_seed', type=int, default=3 ) 
     parser.add_argument('--max_seed', type=int, default=10 ) 
@@ -240,10 +240,14 @@ if __name__ == "__main__":
 
 # running now 0-10, 10-20, 20-30 :) 
 
-# CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type DCSVGP --mll_type ELBO
-# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type ApproximateGP --mll_type ELBO
+# docker pull nmaus/robot 
+# docker run -v /shared_data/constrained-lolbo:/workspace/constrained-lolbo --gpus all -it nmaus/robot
 
+# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 23 --max_seed 32 --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 23 --max_seed 32 --surrogate_model_type ApproximateGP --mll_type ELBO
+# running above for 3-12, 13-22, 23-32 (Kaiwen doing 0-2)
+# Not doing PPGPR (below, all on Gauss!)
 
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 --surrogate_model_type DCSVGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 13 -surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 12 --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --task_id lunar --min_seed 3 --max_seed 12 -surrogate_model_type ApproximateGP --mll_type PPGPR
 
