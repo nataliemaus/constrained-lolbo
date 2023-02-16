@@ -11,6 +11,7 @@ from turbo.trust_region import (
     update_state
 )
 from turbo.tasks.rover.rover_objective import RoverObjective
+from turbo.tasks.lunar_lander.lunarlunar_lander_objective import LunarLanderObjective
 from turbo.bo_utils.ppgpr import (
     GPModelDKL,
 )
@@ -120,6 +121,8 @@ class RunTurbo():
     def init_objective(self):
         if self.args.task_id == "rover":
             self.objective = RoverObjective()
+        elif self.args.task_id == "lunar":
+            self.objective = LunarLanderObjective()
         else:
             assert 0 
 
@@ -228,8 +231,18 @@ if __name__ == "__main__":
         runner.run()
 
 # cd turbo 
-# CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
-# CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
-# CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=2 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=3 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
+
+# running now 0-10, 10-20, 20-30 :) 
+
+
+# CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type ELBO
+# CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type ELBO
+
+
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --surrogate_model_type DCSVGP --mll_type PPGPR
+# CUDA_VISIBLE_DEVICES=X python3 run_turbo.py --surrogate_model_type ApproximateGP --mll_type PPGPR
 
