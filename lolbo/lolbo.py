@@ -6,8 +6,8 @@ from lolbo.utils.bo_utils.turbo import TurboState, update_state, generate_batch
 from lolbo.utils.utils import update_models_end_to_end, update_surr_model, update_constraint_surr_models
 from lolbo.utils.bo_utils.ppgpr import GPModelDKL
 from lolbo.utils.bo_utils.dcsvgp import DCSVGP, BaselineSVGP
+from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import DCSVGP_DKL
 import numpy as np
-
 
 class LOLBOState:
 
@@ -56,7 +56,7 @@ class LOLBOState:
         self.initial_model_training_complete = False # initial training of surrogate model uses all data for more epochs
         self.new_best_found = False
 
-        assert self.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
+        assert self.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL", "DCSVGP_DKL"]
         assert self.mll_type in ["ELBO", "PPGPR"]
 
         self.initialize_top_k()
@@ -150,7 +150,17 @@ class LOLBOState:
         elif self.surrogate_model_type == "ApproximateGP":
             self.model = BaselineSVGP(self.train_z[:n_pts, :].cuda() ).cuda() 
         elif self.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
-            self.model = GPModelDKL(self.train_z[:n_pts, :].cuda(), likelihood=likelihood ).cuda()
+            self.model = GPModelDKL(
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                likelihood=likelihood,
+                hidden_dims=(128, 128),
+            ).cuda()
+        elif self.surrogate_model_type == "DCSVGP_DKL":
+            self.model = DCSVGP_DKL(
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                likelihood=likelihood,
+                hidden_dims=(128, 128), 
+            ).cuda()
         else:
             assert("Invalid surrogate model type")
 
