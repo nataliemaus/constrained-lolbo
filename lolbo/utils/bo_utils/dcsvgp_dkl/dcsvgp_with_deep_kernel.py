@@ -69,7 +69,7 @@ class DCSVGP_DKL(ApproximateGP):
         inducing_points_covar = feature_extractor_covar(inducing_points)
 
         variational_distribution = CholeskyVariationalDistribution(inducing_points_covar.size(0))
-        if shared_inducing_pts:
+        if not shared_inducing_pts:
             variational_strategy = RegularVariationalStrategyDecoupledFeatureExtractors(
                 self,
                 inducing_points_mean,
@@ -77,7 +77,7 @@ class DCSVGP_DKL(ApproximateGP):
                 variational_distribution,
                 learn_inducing_locations=True
             )
-        else:
+        else: # shared induction points ... 
             variational_strategy = SharedInducingVariationalStrategyDecoupledFeatureExtractors(
                 self,
                 inducing_points_mean,

@@ -152,18 +152,20 @@ conda activate lolbo_mols
 
 # Variations: 
 
-CUDA_VISIBLE_DEVICES=1 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 200000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=7 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
+# running x8 on LOCUST, x1 on allegro 
+
+CUDA_VISIBLE_DEVICES=1 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x10 (5 wed pm, 3 thurs 7am, 2 thurs 9am)
 # RANO X4 (thrus 9am Locust)
 
-CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 200000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=7 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x10 (5 wed pm, 3 thurs 7am, 2 thurs 9am)
-# RANO X4 (thrus 9am Locust)
 
-CUDA_VISIBLE_DEVICES=2 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 200000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=2 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x0 
 
-CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 200000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x0 
 
 # PDOP on both Gauss and Allegro 6,7! 
@@ -171,8 +173,5 @@ CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id pdop --update_
 
 # LOCUST:
 docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
-
-# TODO!!! RESTART: 
-CUDA_VISIBLE_DEVICES=6 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 200000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done
 
 --dc_shared_inducing_pts True ... !!! 
