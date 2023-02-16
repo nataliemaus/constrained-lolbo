@@ -2,7 +2,7 @@ import gpytorch
 from gpytorch.models import ApproximateGP
 from gpytorch.variational import CholeskyVariationalDistribution
 # from gpytorch.variational import VariationalStrategy
-from variational_strategy_decoupled_feature_extractor import VariationalStrategyDecoupledFeatureExtractors
+from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor import VariationalStrategyDecoupledFeatureExtractors
 from botorch.posteriors.gpytorch import GPyTorchPosterior
 import torch
 from collections import OrderedDict

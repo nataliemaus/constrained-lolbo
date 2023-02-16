@@ -11,7 +11,7 @@ from gpytorch.utils.cholesky import psd_safe_cholesky
 from gpytorch.utils.errors import CachingError
 from gpytorch.utils.memoize import cached, clear_cache_hook, pop_from_cache_ignore_args
 from gpytorch.utils.warnings import OldVersionWarning
-from _variational_strategy_decoupled_feature_extractor import _VariationalStrategyDecoupledFeatureExtractors
+from lolbo.utils.bo_utils.dcsvgp_dkl._variational_strategy_decoupled_feature_extractor import _VariationalStrategyDecoupledFeatureExtractors
 
 def _ensure_updated_strategy_flag_set(
     state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
