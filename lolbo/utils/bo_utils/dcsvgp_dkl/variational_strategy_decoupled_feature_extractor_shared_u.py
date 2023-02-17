@@ -10,7 +10,9 @@ from gpytorch.utils.cholesky import psd_safe_cholesky
 from gpytorch.utils.errors import CachingError
 from gpytorch.utils.memoize import cached, clear_cache_hook, pop_from_cache_ignore_args
 from gpytorch.utils.warnings import OldVersionWarning
-from gpytorch.variational._variational_strategy import _VariationalStrategy
+# from gpytorch.variational._variational_strategy import _VariationalStrategy
+from lolbo.utils.bo_utils.dcsvgp_dkl._variational_strategy_decoupled_feature_extractor import _VariationalStrategyDecoupledFeatureExtractors
+
 
 def _ensure_updated_strategy_flag_set(
     state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
@@ -27,7 +29,7 @@ def _ensure_updated_strategy_flag_set(
         )
 
 
-class VariationalStrategyDecoupledFeatureExtractors(_VariationalStrategy):
+class VariationalStrategyDecoupledFeatureExtractors(_VariationalStrategyDecoupledFeatureExtractors):
     r"""
     The variational strategy using decoupled conditionals.
     This strategy takes a set of :math:`m \ll n` inducing points :math:`\mathbf Z`
