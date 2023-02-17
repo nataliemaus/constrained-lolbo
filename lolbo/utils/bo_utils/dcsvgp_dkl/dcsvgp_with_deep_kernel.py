@@ -79,8 +79,7 @@ class DCSVGP_DKL(ApproximateGP):
         else: # shared induction points ... 
             variational_strategy = SharedInducingVariationalStrategyDecoupledFeatureExtractors(
                 self,
-                inducing_points_mean,
-                inducing_points_covar,
+                inducing_points,
                 variational_distribution,
             )
         super(DCSVGP_DKL, self).__init__(variational_strategy)
