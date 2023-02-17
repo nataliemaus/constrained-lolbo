@@ -4,7 +4,7 @@ from gpytorch.variational import CholeskyVariationalDistribution
 # from gpytorch.variational import VariationalStrategy
 from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor import VariationalStrategyDecoupledFeatureExtractors as RegularVariationalStrategyDecoupledFeatureExtractors
 from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor_shared_u import VariationalStrategyDecoupledFeatureExtractors as SharedInducingVariationalStrategyDecoupledFeatureExtractors
-
+from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_decoupled_feature_extractor_shared_z_feature import VariationalStrategyDecoupledFeatureExtractors as VariationalStrategyDecoupledFeatureExtractorsSharedZ
 from botorch.posteriors.gpytorch import GPyTorchPosterior
 import torch
 from collections import OrderedDict
@@ -58,12 +58,10 @@ class DCSVGP_DKL(ApproximateGP):
             input_dim=inducing_points.size(-1),
             hidden_dims=hidden_dims).to(inducing_points.device
         )
-
         feature_extractor_covar = DenseNetwork(
             input_dim=inducing_points.size(-1),
             hidden_dims=hidden_dims).to(inducing_points.device
         )   
-
         inducing_points_mean = feature_extractor_mean(inducing_points)
         inducing_points_covar = feature_extractor_covar(inducing_points)
 
@@ -111,6 +109,61 @@ class DCSVGP_DKL(ApproximateGP):
             dist = self.likelihood(self(X))
 
             return GPyTorchPosterior(mvn=dist)
+
+
+class DCSVGP_DKL_SHARED_Z(ApproximateGP):
+    # decoupled_feature_extractor_shared_z_feature
+    def __init__(
+        self, 
+        inducing_points, 
+        likelihood, 
+        hidden_dims=(256, 256),
+    ):
+        feature_extractor_mean = DenseNetwork(
+            input_dim=inducing_points.size(-1),
+            hidden_dims=hidden_dims).to(inducing_points.device
+        )
+        feature_extractor_covar = DenseNetwork(
+            input_dim=inducing_points.size(-1),
+            hidden_dims=hidden_dims).to(inducing_points.device
+        )   
+        inducing_points = feature_extractor_covar(inducing_points)
+        variational_distribution = CholeskyVariationalDistribution(inducing_points.size(0))
+        variational_strategy = VariationalStrategyDecoupledFeatureExtractorsSharedZ(
+            self,
+            inducing_points,
+            variational_distribution,
+            learn_inducing_locations=True
+        )
+        super(DCSVGP_DKL_SHARED_Z, self).__init__(variational_strategy)
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.num_outputs = 1 #must be one
+        self.likelihood = likelihood
+        self.feature_extractor_mean = feature_extractor_mean
+        self.feature_extractor_covar = feature_extractor_covar
+
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+
+    def __call__(self, x, *args, **kwargs):
+        x_mean = self.feature_extractor_mean(x)
+        x = self.feature_extractor_covar(x)
+        kwargs["x_mean"] = x_mean
+        # print("Calling Variational strategy")
+        return super().__call__(x, *args, **kwargs)
+
+    def posterior(
+        self, X, output_indices=None, observation_noise=False, *args, **kwargs
+    ) -> GPyTorchPosterior:
+        self.eval()  # make sure model is in eval mode 
+        # self.model.eval() 
+        self.likelihood.eval()
+        dist = self.likelihood(self(X))
+
+        return GPyTorchPosterior(mvn=dist)
 
 
 if __name__ == "__main__":

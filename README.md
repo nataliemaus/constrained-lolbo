@@ -152,8 +152,8 @@ conda activate lolbo_mols
 
 # Variations: 
 
-CUDA_VISIBLE_DEVICES=7 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
-# running x8 on LOCUST, x1 on allegro 
+CUDA_VISIBLE_DEVICES=9 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
+# running x8 on LOCUST, x2 on allegro, x5 on gauss 
 
 CUDA_VISIBLE_DEVICES=1 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x10 (5 wed pm, 3 thurs 7am, 2 thurs 9am)
