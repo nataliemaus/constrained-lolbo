@@ -5,8 +5,8 @@ from gpytorch.mlls import PredictiveLogLikelihood
 from lolbo.utils.bo_utils.turbo import TurboState, update_state, generate_batch
 from lolbo.utils.utils import update_models_end_to_end, update_surr_model, update_constraint_surr_models
 from lolbo.utils.bo_utils.ppgpr import GPModelDKL
-from lolbo.utils.bo_utils.dcsvgp import DCSVGP, BaselineSVGP, DCSVGP_DKL_SHARED_Z 
-from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import DCSVGP_DKL
+from lolbo.utils.bo_utils.dcsvgp import DCSVGP, BaselineSVGP
+from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import DCSVGP_DKL, DCSVGP_DKL_SHARED_Z 
 import numpy as np
 
 class LOLBOState:
