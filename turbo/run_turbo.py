@@ -50,26 +50,26 @@ class RunTurbo():
             self.model = BaselineSVGP(self.train_x.cuda() ).cuda() 
         elif self.args.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
             self.model = GPModelDKL(
-                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                inducing_points=self.train_x.cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128),
             ).cuda()
         elif self.args.surrogate_model_type == "DCSVGP_DKL":
             self.model = DCSVGP_DKL(
-                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                inducing_points=self.train_x.cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128), 
                 shared_inducing_pts=self.args.dc_shared_inducing_pts,
             ).cuda()  
         elif self.args.surrogate_model_type == "DCSVGP_DKL_SHARED_Z":
             self.model = DCSVGP_DKL_SHARED_Z( 
-                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                inducing_points=self.train_x.cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128), 
             ).cuda()
         elif self.args.surrogate_model_type == "NNSVGP":
             self.model = NNSVGP( 
-                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                inducing_points=self.train_x.cuda(), 
             ).cuda()
         else:
             assert("Invalid surrogate model type")
