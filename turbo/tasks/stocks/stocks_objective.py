@@ -24,7 +24,7 @@ class StocksObjective(Objective):
             ub=1.0,
             **kwargs,
         )
-        portfolio = pd.read_csv('../robot/tasks/stocks/SP500_3years.csv')  # (756, 500)
+        portfolio = pd.read_csv('../turbo/tasks/stocks/SP500_3years.csv')  # (756, 500)
         assert int(portfolio.shape[1]) == 500 # check that all 500 stocks were loaded
         # self.stocks_list = self.portfolio.keys().tolist()
         self.portfolio_tensor = torch.tensor(portfolio.values).float() 
