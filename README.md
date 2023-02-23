@@ -152,6 +152,12 @@ conda activate lolbo_mols
 
 # Variations: 
 
+# NNSVGP
+CUDA_VISIBLE_DEVICES=4 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type NNSVGP --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
+# PDOP x5 
+# RANO 
+# MED1 x1 
+
 # DCSVGP_DKL_SHARED_Z
 CUDA_VISIBLE_DEVICES=3 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
 # med1 x 4

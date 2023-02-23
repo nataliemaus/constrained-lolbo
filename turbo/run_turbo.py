@@ -12,6 +12,7 @@ from turbo.trust_region import (
 )
 from turbo.tasks.rover.rover_objective import RoverObjective
 from turbo.tasks.lunar_lander.lunarlunar_lander_objective import LunarLanderObjective
+from turbo.tasks.stocks.stocks_objective import StocksObjective
 from turbo.bo_utils.ppgpr import (
     GPModelDKL,
 )
@@ -19,6 +20,11 @@ from turbo.bo_utils.dcsvgp import (
     DCSVGP,
     BaselineSVGP
 )
+from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import (
+    DCSVGP_DKL,
+    DCSVGP_DKL_SHARED_Z
+)
+from lolbo.utils.bo_utils.dcsvgp_dkl.nnsvgp import NNSVGP
 from torch.utils.data import (
     TensorDataset, 
     DataLoader
@@ -42,8 +48,29 @@ class RunTurbo():
             self.model = DCSVGP(self.train_x.cuda() ).cuda() 
         elif self.args.surrogate_model_type == "ApproximateGP":
             self.model = BaselineSVGP(self.train_x.cuda() ).cuda() 
-        elif self.args.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
-            self.model = GPModelDKL(self.train_x.cuda(), likelihood=likelihood ).cuda()
+        elif self.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
+            self.model = GPModelDKL(
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                likelihood=likelihood,
+                hidden_dims=(128, 128),
+            ).cuda()
+        elif self.surrogate_model_type == "DCSVGP_DKL":
+            self.model = DCSVGP_DKL(
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                likelihood=likelihood,
+                hidden_dims=(128, 128), 
+                shared_inducing_pts=self.dc_shared_inducing_pts,
+            ).cuda()  
+        elif self.surrogate_model_type == "DCSVGP_DKL_SHARED_Z":
+            self.model = DCSVGP_DKL_SHARED_Z( 
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+                likelihood=likelihood,
+                hidden_dims=(128, 128), 
+            ).cuda()
+        elif self.surrogate_model_type == "NNSVGP":
+            self.model = NNSVGP( 
+                inducing_points=self.train_z[:n_pts, :].cuda(), 
+            ).cuda()
         else:
             assert("Invalid surrogate model type")
 
@@ -123,6 +150,8 @@ class RunTurbo():
             self.objective = RoverObjective()
         elif self.args.task_id == "lunar":
             self.objective = LunarLanderObjective()
+        elif self.args.task_id == "stocks":
+            self.objective = StocksObjective()
         else:
             assert 0 
 
@@ -223,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument('--surrogate_model_type', default="ApproximateGP_DKL" ) 
     parser.add_argument('--mll_type', default="PPGPR" ) 
     og_args = parser.parse_args() 
-    assert og_args.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
+    # assert og_args.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
     assert og_args.mll_type in ["ELBO", "PPGPR"]
 
     args = copy.deepcopy(og_args)
