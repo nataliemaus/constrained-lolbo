@@ -7,6 +7,7 @@ from gpytorch.models import ApproximateGP
 from gpytorch.variational import CholeskyVariationalDistribution
 from lolbo.utils.bo_utils.dcsvgp_dkl.variational_strategy_nn_mean_predictor import VariationalStrategyNNMeanPredictor
 from torch.utils.data import TensorDataset, DataLoader
+from botorch.posteriors.gpytorch import GPyTorchPosterior
 
 class MLP(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
