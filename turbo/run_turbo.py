@@ -59,7 +59,7 @@ class RunTurbo():
                 inducing_points=self.train_z[:n_pts, :].cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128), 
-                shared_inducing_pts=self.dc_shared_inducing_pts,
+                shared_inducing_pts=self.args.dc_shared_inducing_pts,
             ).cuda()  
         elif self.surrogate_model_type == "DCSVGP_DKL_SHARED_Z":
             self.model = DCSVGP_DKL_SHARED_Z( 
@@ -251,6 +251,7 @@ if __name__ == "__main__":
     # often 
     parser.add_argument('--surrogate_model_type', default="ApproximateGP_DKL" ) 
     parser.add_argument('--mll_type', default="PPGPR" ) 
+    parser.add_argument('--dc_shared_inducing_pts', type=bool, default=False)
     og_args = parser.parse_args() 
     # assert og_args.surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
     assert og_args.mll_type in ["ELBO", "PPGPR"]

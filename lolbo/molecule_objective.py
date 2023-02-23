@@ -12,7 +12,8 @@ from lolbo.utils.mol_utils.mol_utils import GUACAMOL_TASK_NAMES
 
 class MoleculeObjective(LatentSpaceObjective):
     '''MoleculeObjective class supports all molecule optimization
-        tasks and uses the SELFIES VAE by default '''
+        tasks and uses the SELFIES VAE by default 
+    '''
 
     def __init__(
         self,
@@ -41,7 +42,6 @@ class MoleculeObjective(LatentSpaceObjective):
             xs_to_scores_dict=xs_to_scores_dict,
             task_id=task_id,
         )
-
 
     def vae_decode(self, z):
         '''Input

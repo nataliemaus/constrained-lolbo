@@ -143,7 +143,6 @@ See example optimization class for molecule tasks:
 # For testing DCSVGP: 
 CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 500 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 5 --wandb_entity nmaus --surrogate_model_type DCSVGP --mll_type PPGPR - run_lolbo - done 
 
-
 surrogate_model_type in ["DCSVGP", "ApproximateGP", "ApproximateGP_DKL"]
 mll_type in ["ELBO", "PPGPR"]
 
@@ -191,3 +190,25 @@ CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id zale --update_
 docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
 
 --dc_shared_inducing_pts True ... !!! 
+
+
+
+
+# TURBO: 
+
+CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO
+CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO
+CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR
+CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR
+
+## STOCK OPT: 
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type ApproximateGP_DKL --mll_type ELBO
+
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type NNSVGP --mll_type ELBO
+
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO
+
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --dc_shared_inducing_pts True
+
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO
+ 
