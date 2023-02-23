@@ -1,5 +1,5 @@
 import torch 
-from robot.objective import Objective
+from turbo.objective import Objective
 import pandas as pd 
 
 
