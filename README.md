@@ -195,6 +195,8 @@ docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus
 
 
 # TURBO: 
+docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
+docker run -v /shared_data/constrained-lolbo/:/workspace/constrained-lolbo/ --gpus all -it nmaus/robot
 
 CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO
 CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO
@@ -202,13 +204,13 @@ CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 0 --max_s
 CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR
 
 ## STOCK OPT: 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type ApproximateGP_DKL --mll_type ELBO
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type NNSVGP --mll_type ELBO
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type NNSVGP --mll_type ELBO --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --dc_shared_inducing_pts True
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --dc_shared_inducing_pts True --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO --max_n_calls 10000000 --bsz 50 
  
