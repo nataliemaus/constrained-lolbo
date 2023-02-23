@@ -10,6 +10,7 @@ from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import DCSVGP_DKL, 
 from lolbo.utils.bo_utils.dcsvgp_dkl.nnsvgp import NNSVGP
 import numpy as np
 
+
 class LOLBOState:
 
     def __init__(
