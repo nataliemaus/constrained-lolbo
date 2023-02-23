@@ -57,3 +57,12 @@ class NNSVGP(ApproximateGP):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+    
+    def posterior(
+        self, X, output_indices=None, observation_noise=False, *args, **kwargs
+    ) -> GPyTorchPosterior:
+        self.eval()  # make sure model is in eval mode 
+        # self.model.eval() 
+        self.likelihood.eval()
+        dist = self.likelihood(self(X))
+        return GPyTorchPosterior(mvn=dist)
