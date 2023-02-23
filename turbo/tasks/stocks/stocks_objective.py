@@ -11,7 +11,6 @@ class StocksObjective(Objective):
     ''' 
     def __init__(
         self,
-        tau,
         xs_to_scores_dict={},
         num_calls=0,
         **kwargs,
@@ -29,7 +28,6 @@ class StocksObjective(Objective):
         assert int(portfolio.shape[1]) == 500 # check that all 500 stocks were loaded
         # self.stocks_list = self.portfolio.keys().tolist()
         self.portfolio_tensor = torch.tensor(portfolio.values).float() 
-        self.tau = tau
 
 
     def query_oracle(self, weights):
@@ -61,35 +59,3 @@ class StocksObjective(Objective):
 
         return sharpe_ratio.item() 
 
-
-    def divf(
-        self,
-        weights1,
-        weights2,
-        stop_at_minDist=True,
-    ):
-        ''' Portfolio TopK Distance:
-        Distance between two stock portfolios = 
-        Maximum value k such that top k stocks are all different
-        (No intersection between top k stocks for each portfolio)
-        ''' 
-        if weights1.ndim > 1:
-            weights1 = weights1.squeeze() 
-        if weights2.ndim > 1:
-            weights2 = weights2.squeeze() 
-        assert len(weights1) == 500 
-        assert weights1.ndim == 1
-        assert len(weights2) == 500 
-        assert weights2.ndim == 1
-        _, ordered_idxs1 = torch.topk(weights1, len(weights1)) 
-        _, ordered_idxs2 = torch.topk(weights2, len(weights1)) 
-        for k in range(1,len(ordered_idxs1)): 
-            idxs1 = set(ordered_idxs1[0:k].tolist()) 
-            idxs2 = set(ordered_idxs2[0:k].tolist())  
-            if len(idxs1 & idxs2) > 0: # if top k have any stock in common 
-                break 
-            # stop computing early when min diversity acheived to save time
-            elif stop_at_minDist and (k > self.tau): 
-                return k  
-
-        return k - 1 # Max k such that top k stocks are all different 
