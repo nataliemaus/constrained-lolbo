@@ -46,7 +46,7 @@ class DCSVGP_V2(ApproximateGP):
         covar_module_mean = gpytorch.kernels.RBFKernel()
         variational_strategy = VariationalStrategyDecoupledConditionalsV2(self, inducing_points, 
                                                  variational_distribution, covar_module_mean)
-        super(DCSVGP, self).__init__(variational_strategy)
+        super(DCSVGP_V2, self).__init__(variational_strategy)
         
         self.mean_module = gpytorch.means.ConstantMean()
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
