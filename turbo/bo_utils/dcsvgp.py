@@ -57,7 +57,7 @@ class DCSVGP_V2(ApproximateGP):
     ) -> GPyTorchPosterior:
         self.eval()  # make sure model is in eval mode
         self.likelihood.eval()
-        dist = self.forward(X)
+        dist = self.forward(X, **kwargs)
         if observation_noise:
             dist = self.likelihood(dist, *args, **kwargs)
 

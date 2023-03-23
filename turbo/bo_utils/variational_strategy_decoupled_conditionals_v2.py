@@ -102,8 +102,6 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
 
         :rtype: torch.Tensor
         """
-        import pdb 
-        pdb.set_trace()
         x = kwargs["x"]
         m = self.variational_distribution.loc
         L_s = self.variational_distribution.lazy_covariance_matrix.root
