@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from gpytroch.mlls.marginal_log_likelihood import MarginalLogLikelihood
-
+# from .marginal_log_likelihood import MarginalLogLikelihood
+from gpytorch.mlls.marginal_log_likelihood import MarginalLogLikelihood
 import time
 
 class _ApproximateMarginalLogLikelihood(MarginalLogLikelihood, ABC):
