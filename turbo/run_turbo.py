@@ -38,6 +38,7 @@ import os
 os.environ["WANDB_SILENT"] = "true" 
 import random 
 import pandas as pd 
+from bo_utils._approximate_mll import * 
 
 
 class RunTurbo():
@@ -128,7 +129,7 @@ class RunTurbo():
         for _ in range(n_epochs):
             for (inputs, scores) in train_loader:
                 optimizer.zero_grad()
-                output = self.model(inputs.cuda())
+                output = self.model(inputs.cuda()) 
                 if self.args.surrogate_model_type == "DCSVGP_V2": 
                     kwargs["x"] = inputs.cuda()
                     loss = -self.mll(output, scores.cuda(), **kwargs).sum() 

@@ -11,7 +11,6 @@ from gpytorch.utils.errors import CachingError
 from gpytorch.utils.memoize import cached, clear_cache_hook, pop_from_cache_ignore_args
 from gpytorch.utils.warnings import OldVersionWarning
 from gpytorch.variational._variational_strategy import _VariationalStrategy
-from ._approximate_mll import * 
 
 def _ensure_updated_strategy_flag_set(
     state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
