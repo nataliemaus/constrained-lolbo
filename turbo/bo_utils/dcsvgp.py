@@ -61,7 +61,7 @@ class DCSVGP_V2(ApproximateGP):
         if observation_noise:
             dist = self.likelihood(dist, *args, **kwargs)
 
-        return GPyTorchPosterior(mvn=dist)
+        return GPyTorchPosterior(mvn=dist, **kwargs)
         
     def forward(self, x):
         mean_x = self.mean_module(x)
