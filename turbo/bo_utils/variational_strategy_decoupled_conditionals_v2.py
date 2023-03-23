@@ -117,7 +117,7 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         induc_data_covar = full_covar[..., :num_induc, num_induc:].evaluate()
         data_data_covar = full_covar[..., num_induc:, num_induc:].add_jitter()
         L = self._cholesky_factor(induc_induc_covar)
-        LinvKmn = L.inv_matmul(induc_data_covar)
+        LinvKmn = L.inv_matmul(induc_data_covar.float())
         data_data_covar_schur = data_data_covar - LinvKmn.transpose(-1, -2) @ LinvKmn
         L_schur = self._cholesky_factor_schur(data_data_covar_schur)
 
