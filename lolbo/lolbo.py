@@ -163,7 +163,7 @@ class LOLBOState:
                 likelihood=likelihood,
                 hidden_dims=(128, 128), 
                 shared_inducing_pts=self.dc_shared_inducing_pts,
-            ).cuda()
+            ).cuda() # DCSVGP_DKL
             ## DCSVGP_DKL_SHARED_Z  
         elif self.surrogate_model_type == "DCSVGP_DKL_SHARED_Z":
             self.model = DCSVGP_DKL_SHARED_Z( 
