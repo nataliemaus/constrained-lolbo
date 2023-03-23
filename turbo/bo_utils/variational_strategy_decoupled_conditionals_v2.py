@@ -116,8 +116,8 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         induc_induc_covar = full_covar[..., :num_induc, :num_induc].add_jitter()
         induc_data_covar = full_covar[..., :num_induc, num_induc:].evaluate()
         data_data_covar = full_covar[..., num_induc:, num_induc:].add_jitter()
-        L = self._cholesky_factor(induc_induc_covar).float() 
-        LinvKmn = L.inv_matmul(induc_data_covar.float())
+        L = self._cholesky_factor(induc_induc_covar.to(torch.float64))# .float64
+        LinvKmn = L.inv_matmul(induc_data_covar.to(torch.float64))
         data_data_covar_schur = data_data_covar - LinvKmn.transpose(-1, -2) @ LinvKmn
         L_schur = self._cholesky_factor_schur(data_data_covar_schur)
 
@@ -126,10 +126,8 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         induc_data_covar_mean = mean_kernel(self.inducing_points, x).evaluate()
         
         # compute KL(q(fm)||p(fm))
-        L_mean = self._cholesky_factor_mean(induc_induc_covar_mean).float()
+        L_mean = self._cholesky_factor_mean(induc_induc_covar_mean)
         logdet_term = L.diag().log().sum() - L_mean.diag().log().sum() - self.variational_distribution.lazy_covariance_matrix.logdet()/2
-        import pdb 
-        pdb.set_trace() 
         trace_term = L.inv_matmul(L_mean.evaluate() @ L_s.evaluate().type(_linalg_dtype_cholesky.value())).to(self.inducing_points.dtype).square().sum()
         Lm = (L_mean @ (m-m_p).to(dtype=L_mean.dtype)).reshape(-1,1)
         quad_term_half = L.inv_matmul(Lm.type(_linalg_dtype_cholesky.value())).to(self.inducing_points.dtype)
