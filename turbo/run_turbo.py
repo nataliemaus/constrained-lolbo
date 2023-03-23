@@ -130,6 +130,8 @@ class RunTurbo():
                 optimizer.zero_grad()
                 output = self.model(inputs.cuda())
                 if self.args.surrogate_model_type == "DCSVGP_V2": 
+                    import pdb 
+                    pdb.set_trace() 
                     kwargs['x'] = inputs.cuda()
                     loss = -self.mll(output, scores.cuda(), **kwargs).sum() 
                 else:
