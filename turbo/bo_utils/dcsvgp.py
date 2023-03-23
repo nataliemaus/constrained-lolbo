@@ -57,11 +57,11 @@ class DCSVGP_V2(ApproximateGP):
     ) -> GPyTorchPosterior:
         self.eval()  # make sure model is in eval mode
         self.likelihood.eval()
-        dist = self.forward(X, **kwargs)
+        dist = self.forward(X)
         if observation_noise:
             dist = self.likelihood(dist, *args, **kwargs)
 
-        return GPyTorchPosterior(mvn=dist, **kwargs)
+        return GPyTorchPosterior(mvn=dist)
         
     def forward(self, x):
         mean_x = self.mean_module(x)
