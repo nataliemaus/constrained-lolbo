@@ -237,9 +237,14 @@ CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id rover --min_seed 0 --max_s
 CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --max_n_calls 25000
 
 # TODO: 
-CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_v2 --mll_type ELBO --max_n_calls 25000
+CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 25000 --beta2 1.0 
 
-CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_v2 --mll_type PPGPR --max_n_calls 25000 
+CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 25000 --beta2 1.0 
+
+CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 25000 --beta2 0.1
+
+CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 25000 --beta2 0.1
+
 
 
 

@@ -258,6 +258,8 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=0 ) 
     parser.add_argument('--min_seed', type=int, default=3 ) 
     parser.add_argument('--max_seed', type=int, default=10 ) 
+    parser.add_argument('--beta1', type=float, default=1.0 ) 
+    parser.add_argument('--beta2', type=float, default=1.0 ) 
     # often 
     parser.add_argument('--surrogate_model_type', default="ApproximateGP_DKL" ) 
     parser.add_argument('--mll_type', default="PPGPR" ) 
