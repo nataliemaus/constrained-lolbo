@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from .marginal_log_likelihood import MarginalLogLikelihood
+from gpytroch.mlls.marginal_log_likelihood import MarginalLogLikelihood
 
 import time
 
