@@ -151,46 +151,68 @@ conda activate lolbo_mols
 
 # Variations: 
 
+# BASELINE
+CUDA_VISIBLE_DEVICES=2 python3 molecule_optimization.py --task_id shop --update_e2e False --max_n_oracle_calls 200000 --acq_func ts --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --num_initialization_points 2048 --seed 4 - run_lolbo - done 
+# pdop x 13 (gauss) X
+# rano x 20 (gauss) X
+# adip x 10 (gauss) 
+# siga x 14 (6000, Locust)
+# osmb x 4 (6000, Locust) w/ seeds 
+# zale x 10 (gauss) w/ seeds
+# med2 x 5 (gauss) w/ seeds XXX fail 
+# dhop x 3 (6000, Locust) w/ seeds 
+# shop x 5 (gauss) w/ seeds 
+
+cd /shared_data/constrained-lolbo/scripts/
+
+# DCSVGP_DKL 
+CUDA_VISIBLE_DEVICES=8 python3 molecule_optimization.py --task_id shop --update_e2e False --max_n_oracle_calls 200000 --acq_func ts --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --num_initialization_points 2048 --seed 5 - run_lolbo - done 
+# pdop x 13 (gauss) X
+# rano x 20 (gauss) X 
+# adip x 10 (gauss) 
+# siga x 14 (6000, Locust)
+# osmb x 4 (6000, Locust) w/ seeds 
+# zale x 10 (gauss) w/ seeds
+# med2 x 6 (gauss) w/ seeds XXX fail 
+# dhop x 4 (6000, Locust) w/ seeds 
+# shop x 6 (gauss) w/ seeds 
+
+
+
+### RANO FOR JAKE (gauss!)
+# 1. SVGP-DKL 
+CUDA_VISIBLE_DEVICES=5 python3 molecule_optimization.py --task_id med2 --update_e2e False --max_n_oracle_calls 200000 --acq_func ts --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --num_initialization_points 2048 --seed 9 - run_lolbo - done 
+# rano x20 (gauss)
+# zale x10 (gauss) w/ seeds
+# med2 x 0 (gauss) w/ seeds 
+
+# 2. SVGP
+CUDA_VISIBLE_DEVICES=7 python3 molecule_optimization.py --task_id med2 --update_e2e False --max_n_oracle_calls 200000 --acq_func ts --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP --mll_type ELBO --num_initialization_points 2048 --seed 9 - run_lolbo - done 
+# rano x20 (gauss)
+# zale x10 (gauss) w/ seeds
+# med2 x 0 (gauss) w/ seeds 
+
+
+
+
+
+
+
 # NNSVGP
-CUDA_VISIBLE_DEVICES=4 python3 molecule_optimization.py --task_id pdop --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type NNSVGP --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
+CUDA_VISIBLE_DEVICES=6 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type NNSVGP --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
 # PDOP x5 
-# RANO 
-# MED1 x1 
+# RANO x5
+# MED1 x2  
 
 # DCSVGP_DKL_SHARED_Z
 CUDA_VISIBLE_DEVICES=3 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
-# med1 x 4
 
+# DCSVGP_DKL shared 
 CUDA_VISIBLE_DEVICES=4 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 --dc_shared_inducing_pts True - run_lolbo - done 
-# med1 x 4
 
-CUDA_VISIBLE_DEVICES=5 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
-# med1 x 4
-
-CUDA_VISIBLE_DEVICES=6 python3 molecule_optimization.py --task_id med1 --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --num_initialization_points 1024 - run_lolbo - done 
-# med1 x 4
-
-
-
-
-
-
-
-
-CUDA_VISIBLE_DEVICES=6 python3 molecule_optimization.py --task_id rano --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
-# med1 x 1
-
-CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id zale --update_e2e False --max_n_oracle_calls 100000 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 60 --num_update_epochs 2 --wandb_entity nmaus --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --num_initialization_points 1024 - run_lolbo - done 
-# PDOP x0 
-
-# PDOP on both Gauss and Allegro 6,7! 
-# RANO on LOCUST 0-3
 
 # LOCUST:
 docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
-
---dc_shared_inducing_pts True ... !!! 
-
 
 
 
@@ -198,19 +220,50 @@ docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus
 docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
 docker run -v /shared_data/constrained-lolbo/:/workspace/constrained-lolbo/ --gpus all -it nmaus/robot
 
-CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO
-CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO
-CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR
-CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id lunar --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=2 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=3 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --max_n_calls 25000
+
+# TODO: 
+CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_v2 --mll_type ELBO --max_n_calls 25000
+
+CUDA_VISIBLE_DEVICES=9 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_v2 --mll_type PPGPR --max_n_calls 25000 
+
+
 
 ## STOCK OPT: 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type ApproximateGP_DKL --mll_type ELBO --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type NNSVGP --mll_type ELBO --max_n_calls 10000000 --bsz 50 
+# DCSVGP_DKL
+CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id stocks --min_seed 21 --max_seed 22 --surrogate_model_type DCSVGP_DKL --mll_type PPGPR --max_n_calls 20000000 --bsz 1 --acq_func ei  
+# x4
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --max_n_calls 10000000 --bsz 50 
+# Baseline
+CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id stocks --min_seed 21 --max_seed 22 --surrogate_model_type ApproximateGP_DKL --mll_type PPGPR --max_n_calls 20000000 --bsz 1 --acq_func ei 
+# x4
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --dc_shared_inducing_pts True --max_n_calls 10000000 --bsz 50 
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO --max_n_calls 10000000 --bsz 50 
+
+
+
+
+CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type NNSVGP --mll_type ELBO --max_n_calls 10000000 --bsz 16
+# x3
+
+CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL --mll_type ELBO --dc_shared_inducing_pts True --max_n_calls 10000000 --bsz 32 
+# x2
+
+CUDA_VISIBLE_DEVICES=2 python3 run_turbo.py --task_id stocks --min_seed 0 --max_seed 2 --surrogate_model_type DCSVGP_DKL_SHARED_Z --mll_type ELBO --max_n_calls 10000000 --bsz 32
+# x2
  

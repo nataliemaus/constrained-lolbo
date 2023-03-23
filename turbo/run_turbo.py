@@ -18,13 +18,15 @@ from turbo.bo_utils.ppgpr import (
 )
 from turbo.bo_utils.dcsvgp import (
     DCSVGP,
-    BaselineSVGP
+    BaselineSVGP,
+    DCSVGP_V2,
 )
 from lolbo.utils.bo_utils.dcsvgp_dkl.dcsvgp_with_deep_kernel import (
     DCSVGP_DKL,
     DCSVGP_DKL_SHARED_Z
 )
 from lolbo.utils.bo_utils.dcsvgp_dkl.nnsvgp import NNSVGP
+
 from torch.utils.data import (
     TensorDataset, 
     DataLoader
@@ -46,6 +48,8 @@ class RunTurbo():
         likelihood = gpytorch.likelihoods.GaussianLikelihood().cuda() 
         if self.args.surrogate_model_type == "DCSVGP":
             self.model = DCSVGP(self.train_x.cuda() ).cuda() 
+        elif self.args.surrogate_model_type == "DCSVGP_V2":
+            self.model = DCSVGP_V2(self.train_x.cuda() ).cuda() 
         elif self.args.surrogate_model_type == "ApproximateGP":
             self.model = BaselineSVGP(self.train_x.cuda() ).cuda() 
         elif self.args.surrogate_model_type == "ApproximateGP_DKL": # (DEFAULT)
@@ -53,7 +57,7 @@ class RunTurbo():
                 inducing_points=self.train_x.cuda(), 
                 likelihood=likelihood,
                 hidden_dims=(128, 128),
-            ).cuda()
+            ).cuda() 
         elif self.args.surrogate_model_type == "DCSVGP_DKL":
             self.model = DCSVGP_DKL(
                 inducing_points=self.train_x.cuda(), 
@@ -119,11 +123,17 @@ class RunTurbo():
         train_bsz = min(len(self.train_y),128)
         train_dataset = TensorDataset(self.train_x.cuda(), self.train_y.cuda())
         train_loader = DataLoader(train_dataset, batch_size=train_bsz, shuffle=True)
+        if self.args.surrogate_model_type == "DCSVGP_V2": 
+            kwargs = {'beta1': self.args.beta1, "beta2": self.args.beta2}
         for _ in range(n_epochs):
             for (inputs, scores) in train_loader:
                 optimizer.zero_grad()
                 output = self.model(inputs.cuda())
-                loss = -self.mll(output, scores.cuda()).sum() 
+                if self.args.surrogate_model_type == "DCSVGP_V2": 
+                    kwargs['x'] = inputs.cuda()
+                    loss = -self.mll(output, scores.cuda(), **kwargs).sum() 
+                else:
+                    loss = -self.mll(output, scores.cuda()).sum() 
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 optimizer.step()
