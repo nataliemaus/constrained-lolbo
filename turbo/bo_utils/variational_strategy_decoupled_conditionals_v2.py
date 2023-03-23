@@ -117,8 +117,8 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         induc_data_covar = full_covar[..., :num_induc, num_induc:].evaluate()
         data_data_covar = full_covar[..., num_induc:, num_induc:].add_jitter()
         induc_induc_covar = induc_induc_covar.to(torch.float64)
-        L = self._cholesky_factor(induc_induc_covar)# .float64
-        LinvKmn = L.inv_matmul(induc_data_covar)
+        L = self._cholesky_factor(induc_induc_covar.to(torch.float64))# .float64
+        LinvKmn = L.inv_matmul(induc_data_covar.to(torch.float64))
         data_data_covar_schur = data_data_covar - LinvKmn.transpose(-1, -2) @ LinvKmn
         L_schur = self._cholesky_factor_schur(data_data_covar_schur)
 
@@ -138,7 +138,7 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
 
         # add the correction term E_q(fm)[KL(psi(f|fm) || p(f|fm))]
         delta_Lq_1 = L_mean.inv_matmul(induc_data_covar_mean).transpose(-1, -2)
-        delta_Lq_2 = L.inv_matmul(induc_data_covar).transpose(-1, -2)
+        delta_Lq_2 = L.inv_matmul(induc_data_covar.to(torch.float64)).transpose(-1, -2)
         delta_Lq_3 = L.inv_matmul(L_mean.evaluate())
         delta_Lq = delta_Lq_1 - delta_Lq_2 @ delta_Lq_3
         L_schur_delta_Lq = L_schur.inv_matmul(delta_Lq)
