@@ -38,8 +38,10 @@ import os
 os.environ["WANDB_SILENT"] = "true" 
 import random 
 import pandas as pd 
-from bo_utils._approximate_mll import * 
-
+# from gpytorch.mlls import VariationalELBO, PredictiveLogLikelihood
+# Xinran's branch version that takes in kwargs for dcsvgp_v2: 
+from bo_utils.variational_elbo import VariationalELBO
+from bo_utils.predictive_log_likelihood import PredictiveLogLikelihood
 
 class RunTurbo():
     def __init__(self, args):
@@ -80,9 +82,9 @@ class RunTurbo():
             assert("Invalid surrogate model type")
 
         if self.args.mll_type == "ELBO": # Standard SVGP
-            self.mll = gpytorch.mlls.VariationalELBO(self.model.likelihood, self.model, num_data=self.train_x.size(-2))
+            self.mll = VariationalELBO(self.model.likelihood, self.model, num_data=self.train_x.size(-2))
         elif self.args.mll_type == "PPGPR": # PPGPR (DEFAULT)
-            self.mll = gpytorch.mlls.PredictiveLogLikelihood(self.model.likelihood, self.model, num_data=self.train_x.size(-2))
+            self.mll = PredictiveLogLikelihood(self.model.likelihood, self.model, num_data=self.train_x.size(-2))
         else:
             assert("Invalid mll type")
 
