@@ -126,7 +126,7 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         induc_data_covar_mean = mean_kernel(self.inducing_points, x).evaluate()
         
         # compute KL(q(fm)||p(fm))
-        L_mean = self._cholesky_factor_mean(induc_induc_covar_mean)
+        L_mean = self._cholesky_factor_mean(induc_induc_covar_mean).float()
         logdet_term = L.diag().log().sum() - L_mean.diag().log().sum() - self.variational_distribution.lazy_covariance_matrix.logdet()/2
         trace_term = L.inv_matmul(L_mean.evaluate() @ L_s.evaluate().type(_linalg_dtype_cholesky.value())).to(self.inducing_points.dtype).square().sum()
         Lm = (L_mean @ (m-m_p).to(dtype=L_mean.dtype)).reshape(-1,1)
