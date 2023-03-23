@@ -137,7 +137,7 @@ class VariationalStrategyDecoupledConditionalsV2(_VariationalStrategy):
         res = logdet_term + (trace_term + quad_term - L_s.shape[0])/2
 
         # add the correction term E_q(fm)[KL(psi(f|fm) || p(f|fm))]
-        delta_Lq_1 = L_mean.inv_matmul(induc_data_covar_mean).transpose(-1, -2)
+        delta_Lq_1 = L_mean.inv_matmul(induc_data_covar_mean.to(torch.float64)).transpose(-1, -2)
         delta_Lq_2 = L.inv_matmul(induc_data_covar.to(torch.float64)).transpose(-1, -2)
         delta_Lq_3 = L.inv_matmul(L_mean.evaluate())
         delta_Lq = delta_Lq_1 - delta_Lq_2 @ delta_Lq_3
