@@ -87,7 +87,8 @@ class MoleculeObjective(LatentSpaceObjective):
     def initialize_vae(self):
         ''' Sets self.vae to the desired pretrained vae and 
             sets self.dataobj to the corresponding data class 
-            used to tokenize inputs, etc. '''
+            used to tokenize inputs, etc. 
+        '''
         self.dataobj = SELFIESDataset()
         self.vae = InfoTransformerVAE(dataset=self.dataobj)
         # load in state dict of trained model:

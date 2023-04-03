@@ -138,8 +138,6 @@ Create a new child class of Optimize (see `scripts/optimize.py`) which defines t
 See example optimization class for molecule tasks: 
 `scripts/molecule_optimization.py`
 
-
-
 # For testing DCSVGP: 
 CUDA_VISIBLE_DEVICES=0 python3 molecule_optimization.py --task_id logp --update_e2e False --max_n_oracle_calls 500 --bsz 10 --k 10 --track_with_wandb True --init_n_update_epochs 80 --num_update_epochs 5 --wandb_entity nmaus --surrogate_model_type DCSVGP --mll_type PPGPR - run_lolbo - done 
 
@@ -176,7 +174,6 @@ CUDA_VISIBLE_DEVICES=8 python3 molecule_optimization.py --task_id shop --update_
 # med2 x 6 (gauss) w/ seeds XXX fail 
 # dhop x 4 (6000, Locust) w/ seeds 
 # shop x 6 (gauss) w/ seeds 
-
 
 
 ### RANO FOR JAKE (gauss!)
@@ -220,22 +217,21 @@ docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus
 docker run -v /home1/n/nmaus/constrained-lolbo/:/workspace/ --gpus all -it nmaus/robot
 docker run -v /shared_data/constrained-lolbo/:/workspace/constrained-lolbo/ --gpus all -it nmaus/robot
 
-CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO --max_n_calls 25000
+CUDA_VISIBLE_DEVICES=0 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP --mll_type ELBO --max_n_calls 4000
 
-CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO --max_n_calls 25000 
+CUDA_VISIBLE_DEVICES=1 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type ELBO --max_n_calls 4000 
 
-CUDA_VISIBLE_DEVICES=2 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR --max_n_calls 25000
+CUDA_VISIBLE_DEVICES=2 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP --mll_type PPGPR --max_n_calls 4000
 
-CUDA_VISIBLE_DEVICES=3 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR --max_n_calls 25000 
+CUDA_VISIBLE_DEVICES=3 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type ApproximateGP --mll_type PPGPR --max_n_calls 4000 
 
-# adv28 on accient... 
-CUDA_VISIBLE_DEVICES=8 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 25000 --beta2 1.0 
+CUDA_VISIBLE_DEVICES=4 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 4000 --beta2 1.0 
 
-CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 25000 --beta2 1.0 
+CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 4000 --beta2 1.0 
 
-CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 25000 --beta2 0.1
+CUDA_VISIBLE_DEVICES=6 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type ELBO --max_n_calls 4000 --beta2 0.1
 
-CUDA_VISIBLE_DEVICES=5 python3 run_turbo.py --task_id rover --min_seed 0 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 25000 --beta2 0.1
+CUDA_VISIBLE_DEVICES=7 python3 run_turbo.py --task_id rover --min_seed 1 --max_seed 9 --surrogate_model_type DCSVGP_V2 --mll_type PPGPR --max_n_calls 4000 --beta2 0.1
 
 
 

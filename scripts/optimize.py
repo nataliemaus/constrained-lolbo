@@ -203,6 +203,9 @@ class Optimize(object):
         ''' Main optimization loop
         '''
         # creates wandb tracker iff self.track_with_wandb == True
+        # don't save costly stuff periodically... 
+        self.save_data_table_wandb = False 
+        self.save_vae_ckpt = False  
         self.create_wandb_tracker()
         last_logged_n_calls = 0 # log table + save vae ckpt every log_table_freq oracle calls
         #main optimization loop
@@ -239,6 +242,9 @@ class Optimize(object):
             self.print_progress_update()
 
         # log top k scores and xs in table
+            # save expensive stuff at end tho 
+        self.save_data_table_wandb = True 
+        self.save_vae_ckpt = True 
         self.log_topk_table_wandb()
         self.tracker.finish()
 
@@ -264,6 +270,9 @@ class Optimize(object):
     def handler(self, signum, frame):
         # if we Ctrl-c, make sure we log top xs, scores found
         print("Ctrl-c hass been pressed, wait while we save all collected data...")
+        # save expensive stuff at end tho 
+        self.save_data_table_wandb = True 
+        self.save_vae_ckpt = True 
         self.log_topk_table_wandb()
         print("Now terminating wandb tracker...")
         self.tracker.finish() 
@@ -278,34 +287,36 @@ class Optimize(object):
             during optimization '''
         if self.track_with_wandb:
             # save top k xs and ys 
-            cols = ["Top K Scores", "Top K Strings"]
-            data_list = []
-            for ix, score in enumerate(self.lolbo_state.top_k_scores):
-                data_list.append([ score, str(self.lolbo_state.top_k_xs[ix]) ])
-            top_k_table = wandb.Table(columns=cols, data=data_list)
-            self.tracker.log({f"top_k_table": top_k_table})
+            if self.save_data_table_wandb:
+                cols = ["Top K Scores", "Top K Strings"]
+                data_list = []
+                for ix, score in enumerate(self.lolbo_state.top_k_scores):
+                    data_list.append([ score, str(self.lolbo_state.top_k_xs[ix]) ])
+                top_k_table = wandb.Table(columns=cols, data=data_list)
+                self.tracker.log({f"top_k_table": top_k_table})
 
-            # Additionally save table of ALL collected data 
-            cols = ['All Scores', "All Strings"]
-            data_list = []
-            for ix, score in enumerate(self.lolbo_state.train_y.squeeze()):
-                data_list.append([ score.item(), str(self.lolbo_state.train_x[ix]) ])
-            try:
-                full_table = wandb.Table(columns=cols, data=data_list)
-                self.tracker.log({f"full_table": full_table})
-            except:
-                self.tracker.log({'save-data-table-failed':True})
-                save_dir = 'optimization_all_collected_data/'
-                if not os.path.exists(save_dir):
-                    os.mkdir(save_dir)
-                file_path = save_dir + self.wandb_project_name + '_' + wandb.run.name + '_all-data-collected.csv'
-                df = {}
-                df['train_x'] = np.array(self.lolbo_state.train_x)
-                df['train_y'] = self.lolbo_state.train_y.squeeze().detach().cpu().numpy()  
-                df = pd.DataFrame.from_dict(df)
-                df.to_csv(file_path, index=None)
+                # Additionally save table of ALL collected data 
+                cols = ['All Scores', "All Strings"]
+                data_list = []
+                for ix, score in enumerate(self.lolbo_state.train_y.squeeze()):
+                    data_list.append([ score.item(), str(self.lolbo_state.train_x[ix]) ])
+                try:
+                    full_table = wandb.Table(columns=cols, data=data_list)
+                    self.tracker.log({f"full_table": full_table})
+                except:
+                    self.tracker.log({'save-data-table-failed':True})
+        save_dir = 'optimization_all_collected_data/'
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        file_path = save_dir + self.wandb_project_name + '_' + wandb.run.name + '_all-data-collected.csv'
+        df = {}
+        df['train_x'] = np.array(self.lolbo_state.train_x)
+        df['train_y'] = self.lolbo_state.train_y.squeeze().detach().cpu().numpy()  
+        df = pd.DataFrame.from_dict(df)
+        df.to_csv(file_path, index=None)
             
-            # We also want to save the fine-tuned VAE! 
+        # We also want to save the fine-tuned VAE!
+        if self.save_vae_ckpt:
             try:
                 n_calls = self.lolbo_state.objective.num_calls
                 model = copy.deepcopy(self.lolbo_state.objective.vae)
@@ -318,7 +329,6 @@ class Optimize(object):
                 torch.save(model.state_dict(), model_save_path) 
             except: 
                 self.tracker.log({'save-vae-statedict-failed':True})
-
 
         return self
 
